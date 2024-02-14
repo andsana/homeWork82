@@ -1,8 +1,7 @@
-export interface ProductMutation {
-  category: string;
+export interface AlbumMutation {
+  artist: string;
   title: string,
-  price: number,
-  description: string,
+  releaseYear: number,
   image: string | null,
 }
 
