@@ -5,3 +5,9 @@ export interface AlbumMutation {
   image: string | null,
 }
 
+export interface TrackMutation {
+  album: string;
+  title: string,
+  duration: string,
+}
+
