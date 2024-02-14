@@ -3,16 +3,26 @@ import mongoose from 'mongoose';
 
 import {TrackMutation} from '../types';
 import Track from '../models/Track';
+import Album from '../models/Album';
 
 const tracksRouter = Router();
 
 tracksRouter.get('/', async (req, res, next) => {
   try {
     let query = {};
-    const albumId = req.query.track;
+    const albumId = req.query.album;
+    const artistId = req.query.artist;
 
     if (albumId) {
       query = {album: albumId};
+    }
+
+    if (artistId) {
+      const albums = await Album.find({artist: artistId})
+      const albumIds = albums.map(album => album._id);
+
+      const tracks = await Track.find({ album: { $in: albumIds } });
+      return res.send(tracks);
     }
 
     const results = await Track.find(query);
