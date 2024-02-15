@@ -1,4 +1,4 @@
-import {model, Schema, Types} from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 import Artist from './Artist';
 
 const AlbumSchema = new Schema({
@@ -11,8 +11,8 @@ const AlbumSchema = new Schema({
         const artist = await Artist.findById(value);
         return Boolean(artist);
       },
-      message: 'Artist does not exist!'
-    }
+      message: 'Artist does not exist!',
+    },
   },
   title: {
     type: String,

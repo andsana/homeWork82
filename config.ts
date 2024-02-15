@@ -7,7 +7,7 @@ const config = {
   publicPath: path.join(rootPath, 'public'),
   mongoose: {
     db: 'mongodb://localhost/music',
-  }
+  },
 };
 
 export default config;

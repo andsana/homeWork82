@@ -1,8 +1,8 @@
-import {Router} from 'express';
-import mongoose, {Types} from 'mongoose';
+import { Router } from 'express';
+import mongoose, { Types } from 'mongoose';
 
-import {AlbumMutation} from '../types';
-import {imagesUpload} from '../multer';
+import { AlbumMutation } from '../types';
+import { imagesUpload } from '../multer';
 import Album from '../models/Album';
 
 const albumsRouter = Router();
@@ -13,7 +13,7 @@ albumsRouter.get('/', async (req, res, next) => {
     const artistId = req.query.artist;
 
     if (artistId) {
-      query = {artist: artistId};
+      query = { artist: artistId };
     }
 
     const results = await Album.find(query);
@@ -30,13 +30,16 @@ albumsRouter.get('/:id', async (req, res, next) => {
     try {
       _id = new Types.ObjectId(req.params.id);
     } catch {
-      return res.status(404).send({error: 'Wrong ObjectId!'});
+      return res.status(404).send({ error: 'Wrong ObjectId!' });
     }
 
-    const album = await Album.findById(_id).populate('artist', 'title information');
+    const album = await Album.findById(_id).populate(
+      'artist',
+      'title information',
+    );
 
     if (!album) {
-      return res.status(404).send({error: 'Not found!'});
+      return res.status(404).send({ error: 'Not found!' });
     }
 
     res.send(album);

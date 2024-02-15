@@ -1,7 +1,7 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import mongoose from 'mongoose';
 
-import {TrackMutation} from '../types';
+import { TrackMutation } from '../types';
 import Track from '../models/Track';
 import Album from '../models/Album';
 
@@ -14,12 +14,12 @@ tracksRouter.get('/', async (req, res, next) => {
     const artistId = req.query.artist;
 
     if (albumId) {
-      query = {album: albumId};
+      query = { album: albumId };
     }
 
     if (artistId) {
-      const albums = await Album.find({artist: artistId})
-      const albumIds = albums.map(album => album._id);
+      const albums = await Album.find({ artist: artistId });
+      const albumIds = albums.map((album) => album._id);
 
       const tracks = await Track.find({ album: { $in: albumIds } });
       return res.send(tracks);

@@ -6,7 +6,7 @@ import config from './config';
 import artistsRouter from './routers/artists';
 import albumsRouter from './routers/albums';
 import tracksRouter from './routers/tracks';
-
+import userRouter from './routers/users';
 
 const app = express();
 const port = 8000;
@@ -18,6 +18,7 @@ app.use(cors());
 app.use('/artists', artistsRouter);
 app.use('/albums', albumsRouter);
 app.use('/tracks', tracksRouter);
+app.use('/users', userRouter);
 
 const run = async () => {
   await mongoose.connect(config.mongoose.db);
@@ -28,7 +29,7 @@ const run = async () => {
 
   process.on('exit', () => {
     mongoose.disconnect();
-  })
+  });
 };
 
 void run();
