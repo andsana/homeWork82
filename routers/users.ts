@@ -47,32 +47,4 @@ userRouter.post('/sessions', async (req, res, next) => {
   }
 });
 
-userRouter.get('/secret', async (req, res, next) => {
-  try {
-    const headerValue = req.get('Authorization');
-
-    if (!headerValue) {
-      return res.status(401).send({ error: 'No Authorization header present' });
-    }
-    const [_bearer, token] = headerValue.split(' ');
-
-    if (!token) {
-      return res.status(401).send({ error: 'No token present' });
-    }
-
-    const user = await User.findOne({ token });
-
-    if (!user) {
-      return res.status(401).send({ error: 'Wrong token!' });
-    }
-
-    return res.send({
-      message: 'This a secret message!',
-      username: user.username,
-    });
-  } catch (e) {
-    next(e);
-  }
-});
-
 export default userRouter;
