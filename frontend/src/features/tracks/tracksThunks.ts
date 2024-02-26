@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axiosApi from '../../../../../Projects/music-app/frontend/src/axiosApi';
-import { Track } from '../../../../../Projects/music-app/frontend/src/types';
+import axiosApi from '../../axiosApi.ts';
+import { Track } from '../../types';
 
 export const fetchTracks = createAsyncThunk(
   'tracks/fetchAll',

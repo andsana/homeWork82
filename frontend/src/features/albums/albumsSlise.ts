@@ -35,3 +35,5 @@ export const albumsSlice = createSlice({
 export const albumsReducer = albumsSlice.reducer;
 export const selectAlbums = (state: RootState) => state.albums.items;
 export const selectAlbumsFetching = (state: RootState) => state.albums.fetching;
+export const selectAlbum = (state: RootState, albumId: string) =>
+  state.albums.items.find((album) => album._id === albumId);

@@ -25,13 +25,9 @@ const Albums = () => {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid item container>
-        {artistId ? (
-          <Typography variant="h4">
-            {artist?.title || 'No artist title'}
-          </Typography>
-        ) : (
-          <Typography variant="h4">No artist selected</Typography>
-        )}
+        <Typography variant="h4">
+          {artist?.title || 'No artist title'}
+        </Typography>
       </Grid>
       <Grid item container spacing={2}>
         {albumsLoading ? (

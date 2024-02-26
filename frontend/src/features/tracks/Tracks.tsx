@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-
-import { useAppDispatch, useAppSelector } from '../../../../../Projects/music-app/frontend/src/app/hooks';
 import { fetchTracks } from './tracksThunks';
-import { selectTracks, selectTracksFetching } from './tracksSlice.ts';
+
 import TrackItem from './TrackItem.tsx';
+import { selectTracks, selectTracksFetching } from './tracksSlice.ts';
+import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
 
 const Tracks = () => {
   const dispatch = useAppDispatch();
@@ -20,9 +20,6 @@ const Tracks = () => {
 
   return (
     <Grid container direction="column" spacing={2}>
-      <Grid item container>
-        <Typography variant="h4"></Typography>
-      </Grid>
       <Grid item container spacing={2}>
         {tracksLoading ? (
           <CircularProgress />

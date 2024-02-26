@@ -1,7 +1,7 @@
+import { Track } from '../../types';
+import { fetchTracks } from './tracksThunks.ts';
 import { createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../../../../../Projects/music-app/frontend/src/app/store';
-import { fetchTracks } from './tracksThunks';
-import { Track } from '../../../../../Projects/music-app/frontend/src/types';
+import { RootState } from '../../app/store.ts';
 
 interface TracksState {
   items: Track[];
