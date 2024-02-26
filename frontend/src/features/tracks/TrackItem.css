@@ -1,0 +1,10 @@
+.card-track {
+    height: 100%;
+    border: 3px solid #fff;
+    padding: 5px;
+}
+
+.card-actions {
+    flex-direction: column;
+}
+
