@@ -8,6 +8,7 @@ export interface AlbumMutation {
 }
 
 export interface TrackMutation {
+  number: number;
   album: string;
   title: string;
   duration: string;

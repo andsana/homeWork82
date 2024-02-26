@@ -21,11 +21,13 @@ tracksRouter.get('/', async (req, res, next) => {
       const albums = await Album.find({ artist: artistId });
       const albumIds = albums.map((album) => album._id);
 
-      const tracks = await Track.find({ album: { $in: albumIds } });
+      const tracks = await Track.find({ album: { $in: albumIds } }).sort(
+        'number',
+      );
       return res.send(tracks);
     }
 
-    const results = await Track.find(query);
+    const results = await Track.find(query).sort('number');
 
     res.send(results);
   } catch (e) {
@@ -35,6 +37,7 @@ tracksRouter.get('/', async (req, res, next) => {
 tracksRouter.post('/', async (req, res, next) => {
   try {
     const trackData: TrackMutation = {
+      number: req.body.number,
       album: req.body.album,
       title: req.body.title,
       duration: req.body.duration,

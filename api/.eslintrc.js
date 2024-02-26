@@ -35,6 +35,6 @@ module.exports = {
         "argsIgnorePattern": "^_",
         "varsIgnorePattern": "^_"
       }
-    ],
+    ]
   }
-}
+};

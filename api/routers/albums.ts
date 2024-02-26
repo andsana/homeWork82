@@ -1,8 +1,5 @@
 import { Router } from 'express';
-import mongoose, { Types } from 'mongoose';
-
-import { AlbumMutation } from '../types';
-import { imagesUpload } from '../multer';
+import { Types } from 'mongoose';
 import Album from '../models/Album';
 
 const albumsRouter = Router();
@@ -16,7 +13,7 @@ albumsRouter.get('/', async (req, res, next) => {
       query = { artist: artistId };
     }
 
-    const results = await Album.find(query);
+    const results = await Album.find(query).sort({ releaseYear: -1 });
 
     res.send(results);
   } catch (e) {
@@ -44,28 +41,6 @@ albumsRouter.get('/:id', async (req, res, next) => {
 
     res.send(album);
   } catch (e) {
-    next(e);
-  }
-});
-
-albumsRouter.post('/', imagesUpload.single('image'), async (req, res, next) => {
-  try {
-    const albumData: AlbumMutation = {
-      artist: req.body.artist,
-      title: req.body.title,
-      releaseYear: parseFloat(req.body.releaseYear),
-      image: req.file ? req.file.filename : null,
-    };
-
-    const album = new Album(albumData);
-    await album.save();
-
-    res.send(album);
-  } catch (e) {
-    if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(422).send(e);
-    }
-
     next(e);
   }
 });
