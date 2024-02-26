@@ -1,0 +1,18 @@
+.card-album {
+  height: 100%;
+  border: 3px solid #fff;
+  padding: 5px;
+}
+
+.card-album:hover {
+  border-color: yellow;
+  text-decoration: underline;
+}
+
+.card-actions {
+  flex-direction: column;
+}
+
+.card-album-releaseYear {
+  color: grey;
+}

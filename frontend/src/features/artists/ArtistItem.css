@@ -1,10 +1,10 @@
 .card-artist {
-    height: 100%;
-    border: 3px solid #fff;
-    padding: 5px;
+  height: 100%;
+  border: 3px solid #fff;
+  padding: 5px;
 }
 
 .card-artist:hover {
-    border-color: yellow;
-    text-decoration: underline;
+  border-color: yellow;
+  text-decoration: underline;
 }
