@@ -7,12 +7,16 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchAlbums } from './albumsThunks';
 import { selectAlbums, selectAlbumsFetching } from './albumsSlise.ts';
 import AlbumItem from './AlbumItem.tsx';
+import { selectArtistById } from '../artists/artistsSlise.ts';
 
 const Albums = () => {
   const dispatch = useAppDispatch();
   const albums = useAppSelector(selectAlbums);
   const albumsLoading = useAppSelector(selectAlbumsFetching);
   const { artistId } = useParams();
+  const artist = useAppSelector((state) =>
+    artistId ? selectArtistById(state, artistId) : undefined,
+  );
 
   useEffect(() => {
     dispatch(fetchAlbums(artistId));
@@ -21,7 +25,13 @@ const Albums = () => {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid item container>
-        <Typography variant="h4">Albums</Typography>
+        {artistId ? (
+          <Typography variant="h4">
+            {artist?.title || 'No artist title'}
+          </Typography>
+        ) : (
+          <Typography variant="h4">No artist selected</Typography>
+        )}
       </Grid>
       <Grid item container spacing={2}>
         {albumsLoading ? (

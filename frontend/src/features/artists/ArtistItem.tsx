@@ -9,6 +9,8 @@ import './ArtistItem.css';
 const ImageCardMedia = styled(CardMedia)({
   height: 0,
   paddingTop: '56.25%',
+  width: '100%',
+  size: 'cover',
 });
 
 interface Props {

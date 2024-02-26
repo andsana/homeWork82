@@ -36,3 +36,5 @@ export const artistsReducer = artistsSlice.reducer;
 export const selectArtists = (state: RootState) => state.artists.items;
 export const selectArtistsFetching = (state: RootState) =>
   state.artists.fetching;
+export const selectArtistById = (state: RootState, artistId: string) =>
+  state.artists.items.find((artist) => artist._id === artistId);
