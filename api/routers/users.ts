@@ -1,7 +1,6 @@
 import express from 'express';
 import User from '../models/User';
 import mongoose from 'mongoose';
-import auth, { RequestWithUser } from '../middleware/auth';
 
 const userRouter = express.Router();
 
@@ -46,15 +45,15 @@ userRouter.post('/sessions', async (req, res, next) => {
     next(e);
   }
 });
-userRouter.get('/secret', auth, async (req: RequestWithUser, res, next) => {
-  try {
-    return res.send({
-      message: 'This a secret message!',
-      username: req.user?.username,
-    });
-  } catch (e) {
-    next(e);
-  }
-});
+// userRouter.get('/secret', auth, async (req: RequestWithUser, res, next) => {
+//   try {
+//     return res.send({
+//       message: 'This a secret message!',
+//       username: req.user?.username,
+//     });
+//   } catch (e) {
+//     next(e);
+//   }
+// });
 
 export default userRouter;

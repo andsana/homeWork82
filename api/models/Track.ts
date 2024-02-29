@@ -22,7 +22,10 @@ const TrackSchema = new Schema({
     type: String,
     required: true,
   },
-  duration: String,
+  duration: {
+    type: String,
+    required: true,
+  },
 });
 
 const Track = model('Track', TrackSchema);

@@ -30,7 +30,8 @@ const TrackHistorySchema = new Schema({
   },
   datetime: {
     type: Date,
-    required: true,
+    default: () => new Date(),
+    // required: true,
   },
 });
 

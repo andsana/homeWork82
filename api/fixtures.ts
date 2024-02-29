@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
 import config from './config';
+import crypto from 'crypto';
 import Artist from './models/Artist';
 import Album from './models/Album';
 import Track from './models/Track';
+import TrackHistory from './models/TrackHistory';
+import User from './models/User';
 
 const dropCollection = async (
   db: mongoose.Connection,
@@ -19,10 +22,10 @@ const run = async () => {
   await mongoose.connect(config.mongoose.db);
   const db = mongoose.connection;
 
-  const collections = ['artists', 'albums', 'tracks'];
+  const models = [TrackHistory, User, Track, Album, Artist];
 
-  for (const collectionName of collections) {
-    await dropCollection(db, collectionName);
+  for (const model of models) {
+    await dropCollection(db, model.collection.collectionName);
   }
 
   const [nirvana, linkinPark] = await Artist.create(
@@ -65,7 +68,7 @@ const run = async () => {
     },
   );
 
-  await Track.create(
+  const tracks = await Track.create([
     {
       album: nevermind,
       number: 1,
@@ -186,11 +189,20 @@ const run = async () => {
       title: 'Crawling',
       duration: '3:29',
     },
-  );
+  ]);
+
+  const user = await User.create({
+    username: 'user',
+    password: '123456',
+    token: crypto.randomUUID(),
+  });
+
+  await TrackHistory.create({
+    user: user,
+    track: tracks[0],
+  });
 
   await db.close();
 };
 
 void run();
-
-export default Track;
