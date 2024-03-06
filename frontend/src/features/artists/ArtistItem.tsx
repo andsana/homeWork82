@@ -29,7 +29,7 @@ const ArtistItem: React.FC<Props> = ({ title, id, image }) => {
   return (
     <Grid item sm md={6} lg={4}>
       <Link
-        to={'/artists/' + id + '/albums'}
+        to={'/albums/' + id}
         style={{ textDecoration: 'none', color: 'inherit' }}
       >
         <Card className="card-artist">

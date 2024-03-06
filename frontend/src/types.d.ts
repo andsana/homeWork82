@@ -9,6 +9,8 @@ export interface Album {
   title: string;
   releaseYear: number;
   image: string | null;
+  trackCount: number;
+  artist: Artist;
 }
 
 export interface Track {
@@ -16,6 +18,7 @@ export interface Track {
   number: number;
   title: string;
   duration: string;
+  album: Album;
 }
 
 export interface RegisterMutation {

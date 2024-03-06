@@ -1,12 +1,11 @@
 import { Router } from 'express';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 import { TrackMutation } from '../types';
 import Track from '../models/Track';
 import Album from '../models/Album';
 
 const tracksRouter = Router();
-
 tracksRouter.get('/', async (req, res, next) => {
   try {
     let query = {};
@@ -27,13 +26,51 @@ tracksRouter.get('/', async (req, res, next) => {
       return res.send(tracks);
     }
 
-    const results = await Track.find(query).sort('number');
+    const results = await Track.find(query)
+      .populate({
+        path: 'album',
+        select: 'title artist',
+        populate: {
+          path: 'artist',
+          select: 'title',
+        },
+      })
+      .sort('number');
 
     res.send(results);
   } catch (e) {
     return next(e);
   }
 });
+
+tracksRouter.get('/:id', async (req, res, next) => {
+  try {
+    let _id: Types.ObjectId;
+    try {
+      _id = new Types.ObjectId(req.params.id);
+    } catch {
+      return res.status(404).send({ error: 'Wrong ObjectId!' });
+    }
+
+    const track = await Track.findById(_id).populate({
+      path: 'album',
+      select: 'title artist',
+      populate: {
+        path: 'artist',
+        select: 'title',
+      },
+    });
+
+    if (!track) {
+      return res.status(404).send({ error: 'Not found!' });
+    }
+
+    res.send(track);
+  } catch (e) {
+    next(e);
+  }
+});
+
 tracksRouter.post('/', async (req, res, next) => {
   try {
     const trackData: TrackMutation = {

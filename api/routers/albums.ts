@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { Types } from 'mongoose';
 import Album from '../models/Album';
+import Track from '../models/Track';
 
 const albumsRouter = Router();
 
@@ -13,9 +14,19 @@ albumsRouter.get('/', async (req, res, next) => {
       query = { artist: artistId };
     }
 
-    const results = await Album.find(query).sort({ releaseYear: -1 });
+    const albums = await Album.find(query).sort({ releaseYear: -1 });
 
-    res.send(results);
+    const albumsData = await Promise.all(
+      albums.map(async (album) => {
+        const trackCount = await Track.countDocuments({ album: album._id });
+        return {
+          ...album.toObject(),
+          trackCount,
+        };
+      }),
+    );
+
+    res.send(albumsData);
   } catch (e) {
     return next(e);
   }

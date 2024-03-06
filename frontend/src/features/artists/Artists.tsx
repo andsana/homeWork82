@@ -5,17 +5,21 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchArtists } from './artistsThunks';
-import { selectArtists, selectArtistsFetching } from './artistsSlise.ts';
+import { selectArtists, selectArtistsLoading } from './artistsSlise.ts';
 import ArtistItem from './ArtistItem.tsx';
 
 const Artists = () => {
   const dispatch = useAppDispatch();
   const artists = useAppSelector(selectArtists);
-  const ArtistsFetching = useAppSelector(selectArtistsFetching);
+  const isLoadingArtists = useAppSelector(selectArtistsLoading);
 
   useEffect(() => {
     dispatch(fetchArtists());
   }, [dispatch]);
+
+  if (isLoadingArtists) {
+    return <CircularProgress />;
+  }
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -30,9 +34,7 @@ const Artists = () => {
         </Grid>
       </Grid>
       <Grid item container spacing={2}>
-        {ArtistsFetching ? (
-          <CircularProgress />
-        ) : (
+        {artists.length > 0 ? (
           artists.map((artist) => (
             <ArtistItem
               key={artist._id}
@@ -41,6 +43,8 @@ const Artists = () => {
               image={artist.image}
             />
           ))
+        ) : (
+          <Typography>No artists available</Typography>
         )}
       </Grid>
     </Grid>

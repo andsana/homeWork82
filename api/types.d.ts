@@ -20,6 +20,12 @@ export interface UserFields {
   token: string;
 }
 
+export interface ArtistMutation {
+  title: string;
+  image: string;
+  information: string;
+}
+
 interface UserMethods {
   checkPassword(password: string): Promise<boolean>;
   generateToken(): void;

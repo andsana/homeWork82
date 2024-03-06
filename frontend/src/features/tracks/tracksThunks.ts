@@ -15,3 +15,18 @@ export const fetchTracks = createAsyncThunk(
     return response.data;
   },
 );
+
+export const fetchOneTrack = createAsyncThunk<Track, string>(
+  'tracks/fetchOneTrack',
+  async (trackId) => {
+    const response = await axiosApi.get<Track | null>(`/tracks/${trackId}`); // возвращает либо Track либо null
+    console.log('response', response);
+    const track = response.data;
+    console.log('response.data', response.data);
+
+    if (track === null) {
+      throw new Error('Not found');
+    }
+    return track;
+  },
+);
