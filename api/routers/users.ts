@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../models/User';
 import mongoose from 'mongoose';
+import auth, { RequestWithUser } from '../middleware/auth';
 
 const userRouter = express.Router();
 
@@ -45,15 +46,26 @@ userRouter.post('/sessions', async (req, res, next) => {
     next(e);
   }
 });
-// userRouter.get('/secret', auth, async (req: RequestWithUser, res, next) => {
-//   try {
-//     return res.send({
-//       message: 'This a secret message!',
-//       username: req.user?.username,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// });
+
+userRouter.delete(
+  '/sessions',
+  auth,
+  async (req: RequestWithUser, res, next) => {
+    try {
+      if (req.user) {
+        req.user.generateToken();
+        await req.user.save();
+
+        return res.send({ message: 'Successfully logged out' });
+      }
+
+      return res
+        .status(401)
+        .send({ error: 'User not found or already logged out' });
+    } catch (e) {
+      next(e);
+    }
+  },
+);
 
 export default userRouter;

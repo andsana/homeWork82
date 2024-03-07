@@ -1,19 +1,22 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Grid, Typography } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-import { fetchTracks } from './tracksThunks';
+import { CircularProgress, Grid, Typography } from '@mui/material';
 import TrackItem from './TrackItem.tsx';
-import { selectTracks, selectTracksFetching } from './tracksSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
+import { fetchTracks } from './tracksThunks';
+import { selectTracks, selectTracksFetching } from './tracksSlice.ts';
+import { addTrackToHistory } from '../TracksHistory/TracksHistoryThunks.ts';
+import { selectAddingTrackId } from '../TracksHistory/TracksHistorySlice.ts';
 
 const Tracks = () => {
+  const dispatch = useAppDispatch();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const albumId = searchParams.get('album') || '';
-  const dispatch = useAppDispatch();
+
   const tracks = useAppSelector(selectTracks);
   const isLoadingTracks = useAppSelector(selectTracksFetching);
+  const isAddTrackToHistory = useAppSelector(selectAddingTrackId);
 
   const albumTitle =
     tracks.length > 0 ? tracks[0].album.title : 'Unknown Album';
@@ -23,6 +26,11 @@ const Tracks = () => {
   useEffect(() => {
     dispatch(fetchTracks(albumId));
   }, [dispatch, albumId]);
+
+  const handlePlay = (trackId: string) => {
+    dispatch(addTrackToHistory({ trackId }));
+    console.log(trackId);
+  };
 
   if (isLoadingTracks) {
     return (
@@ -46,6 +54,9 @@ const Tracks = () => {
               number={track.number}
               title={track.title}
               duration={track.duration}
+              onPlay={handlePlay}
+              trackId={track._id}
+              isLoading={track._id === isAddTrackToHistory}
             />
           ))
         ) : (

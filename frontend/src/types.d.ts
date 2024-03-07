@@ -57,3 +57,9 @@ export interface RegisterResponse {
 export interface GlobalError {
   error: string;
 }
+
+export interface TracksHistory {
+  datetime: string;
+  artistTitle: string;
+  trackTitle: string;
+}
