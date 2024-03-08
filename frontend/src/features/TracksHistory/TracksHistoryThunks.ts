@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../axiosApi';
 import { RootState } from '../../app/store';
 import { isAxiosError } from 'axios';
-import { GlobalError, TracksHistory } from '../../types';
+import { GlobalError, TrackHistory } from '../../types';
 
 export const addTrackToHistory = createAsyncThunk<
   void,
@@ -31,8 +31,8 @@ export const addTrackToHistory = createAsyncThunk<
   }
 });
 
-export const fetchTrackHistory = createAsyncThunk<
-  TracksHistory[],
+export const fetchTracksHistory = createAsyncThunk<
+  TrackHistory[],
   void,
   { state: RootState; rejectValue: GlobalError }
 >('tracksHistory/fetch', async (_, { getState, rejectWithValue }) => {

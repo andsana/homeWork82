@@ -26,6 +26,9 @@ const TrackSchema = new Schema({
     type: String,
     required: true,
   },
+  link: {
+    type: String,
+  },
 });
 
 const Track = model('Track', TrackSchema);

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import TrackHistory from '../models/TrackHistory';
 import auth, { RequestWithUser } from '../middleware/auth';
+import { ITrackHistory, TrackHistoryMutation } from '../types';
 
 const trackHistoryRouter = Router();
 
@@ -21,12 +22,23 @@ trackHistoryRouter.post('/', auth, async (req: RequestWithUser, res, next) => {
 
 trackHistoryRouter.get('/', auth, async (req: RequestWithUser, res, next) => {
   try {
-    const trackHistories = await TrackHistory.find({
+    const trackHistoriesData: ITrackHistory[] = await TrackHistory.find({
       user: req.user,
     }).populate({
       path: 'track',
       populate: { path: 'album', populate: 'artist' },
     });
+
+    const trackHistories: TrackHistoryMutation[] = trackHistoriesData.map(
+      (th) => ({
+        _id: th._id,
+        artistName: th.track.album.artist.title,
+        albumImage: th.track.album.image,
+        trackTitle: th.track.title,
+        datetime: th.datetime,
+      }),
+    );
+
     return res.send(trackHistories);
   } catch (e) {
     return next(e);

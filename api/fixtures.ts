@@ -74,6 +74,7 @@ const run = async () => {
       number: 1,
       title: 'Smells Like Teen Spirit',
       duration: '5:01',
+      link: 'https://www.youtube.com/watch?v=hTWKbfoikeg',
     },
     {
       album: nevermind,

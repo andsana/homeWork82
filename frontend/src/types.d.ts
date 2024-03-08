@@ -8,7 +8,7 @@ export interface Album {
   _id: string;
   title: string;
   releaseYear: number;
-  image: string | null;
+  image: string;
   trackCount: number;
   artist: Artist;
 }
@@ -19,6 +19,7 @@ export interface Track {
   title: string;
   duration: string;
   album: Album;
+  link: string;
 }
 
 export interface RegisterMutation {
@@ -58,8 +59,10 @@ export interface GlobalError {
   error: string;
 }
 
-export interface TracksHistory {
-  datetime: string;
-  artistTitle: string;
+export interface TrackHistory {
+  _id: string;
+  datetime: Date;
+  artistName: string;
   trackTitle: string;
+  albumImage: string;
 }

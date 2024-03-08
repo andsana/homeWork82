@@ -18,18 +18,21 @@ const Tracks = () => {
   const isLoadingTracks = useAppSelector(selectTracksFetching);
   const isAddTrackToHistory = useAppSelector(selectAddingTrackId);
 
-  const albumTitle =
-    tracks.length > 0 ? tracks[0].album.title : 'Unknown Album';
-  const artistTitle =
-    tracks.length > 0 ? tracks[0].album.artist.title : 'Unknown Artist';
+  const albumTitle = tracks.length > 0 ? tracks[0].album.title : 'Unknown Album';
+  const artistTitle = tracks.length > 0 ? tracks[0].album.artist.title : 'Unknown Artist';
 
   useEffect(() => {
     dispatch(fetchTracks(albumId));
   }, [dispatch, albumId]);
 
-  const handlePlay = (trackId: string) => {
+  const handlePlay = (trackId: string, link: string) => {
     dispatch(addTrackToHistory({ trackId }));
-    console.log(trackId);
+    if (link) {
+      dispatch(addTrackToHistory({ trackId }));
+      window.open(link, '_blank');
+    } else {
+      dispatch(addTrackToHistory({ trackId }));
+    }
   };
 
   if (isLoadingTracks) {
@@ -57,6 +60,7 @@ const Tracks = () => {
               onPlay={handlePlay}
               trackId={track._id}
               isLoading={track._id === isAddTrackToHistory}
+              link={track.link}
             />
           ))
         ) : (

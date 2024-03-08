@@ -26,9 +26,38 @@ export interface ArtistMutation {
   information: string;
 }
 
+export interface TrackHistoryMutation {
+  _id: string;
+  artistName: string;
+  trackTitle: string;
+  datetime: date;
+  albumImage: string;
+}
+
 interface UserMethods {
   checkPassword(password: string): Promise<boolean>;
   generateToken(): void;
 }
 
 type UserModel = Model<UserFields, unknown, UserMethods>;
+
+export interface ITrackHistory {
+  _id: string;
+  track: ITrack;
+  datetime: Date;
+}
+
+export interface ITrack {
+  album: IAlbum;
+  title: string;
+}
+
+export interface IAlbum {
+  artist: IArtist;
+  title: string;
+  image: string;
+}
+
+export interface IArtist {
+  title: string;
+}

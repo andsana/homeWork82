@@ -27,7 +27,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
 
   return (
     <>
-      <Button color="inherit" component={Link} to="/Track History">
+      <Button color="inherit" component={Link} to="/track-history/:id">
         Track History
       </Button>
       <Button color="inherit" component={Link} to="/artists/new">
@@ -36,12 +36,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
       <Button color="inherit" onClick={handleClick}>
         Hello, {user.username}!
       </Button>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        keepMounted
-      >
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose} keepMounted>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </>

@@ -1,9 +1,9 @@
-import {NavLink} from 'react-router-dom';
-import {AppBar, Grid, styled, Toolbar, Typography,} from '@mui/material';
-import {useAppSelector} from "../../../app/hooks.ts";
-import {selectUser} from "../../../features/users/usersSlice.ts";
-import UserMenu from "./UserMenu.tsx";
-import AnonymousMenu from "./AnonymousMenu.tsx";
+import { NavLink } from 'react-router-dom';
+import { AppBar, Grid, styled, Toolbar, Typography } from '@mui/material';
+import { useAppSelector } from '../../../app/hooks.ts';
+import { selectUser } from '../../../features/users/usersSlice.ts';
+import UserMenu from './UserMenu.tsx';
+import AnonymousMenu from './AnonymousMenu.tsx';
 
 const Link = styled(NavLink)({
   color: 'inherit',
@@ -23,11 +23,7 @@ const AppToolbar = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Link to="/">Music</Link>
           </Typography>
-          {user ? (
-            <UserMenu user={user}/>
-          ) : (
-            <AnonymousMenu/>
-          )}
+          {user ? <UserMenu user={user} /> : <AnonymousMenu />}
         </Grid>
       </Toolbar>
     </AppBar>

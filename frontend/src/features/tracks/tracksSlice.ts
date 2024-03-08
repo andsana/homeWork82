@@ -51,5 +51,4 @@ export const tracksReducer = tracksSlice.reducer;
 export const selectTracks = (state: RootState) => state.tracks.items;
 export const selectTracksFetching = (state: RootState) => state.tracks.fetching;
 export const selectTrack = (state: RootState) => state.tracks.item;
-export const selectTrackLoading = (state: RootState) =>
-  state.tracks.fetchOneLoading;
+export const selectTrackLoading = (state: RootState) => state.tracks.fetchOneLoading;

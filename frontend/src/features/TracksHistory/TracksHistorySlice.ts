@@ -1,15 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { GlobalError, TracksHistory } from '../../types';
-import { addTrackToHistory, fetchTrackHistory } from './TracksHistoryThunks.ts';
+import { GlobalError, TrackHistory } from '../../types';
+import { addTrackToHistory, fetchTracksHistory } from './TracksHistoryThunks.ts';
 import { RootState } from '../../app/store.ts';
 
 interface TracksState {
-  items: TracksHistory[];
+  items: TrackHistory[];
   addingTrackId: string | null;
   addTrackToHistoryLoading: boolean;
   addTrackToHistoryError: GlobalError | null;
-  fetchTrackToHistoryLoading: boolean;
-  fetchTrackToHistoryError: GlobalError | null;
+  trackHistoryFetching: boolean;
+  fetchTrackHistoryError: GlobalError | null;
 }
 
 const initialState: TracksState = {
@@ -17,8 +17,8 @@ const initialState: TracksState = {
   addingTrackId: null,
   addTrackToHistoryLoading: false,
   addTrackToHistoryError: null,
-  fetchTrackToHistoryLoading: false,
-  fetchTrackToHistoryError: null,
+  trackHistoryFetching: false,
+  fetchTrackHistoryError: null,
 };
 
 export const tracksHistorySlice = createSlice({
@@ -42,23 +42,21 @@ export const tracksHistorySlice = createSlice({
         state.addTrackToHistoryError = error || null;
       })
 
-      .addCase(fetchTrackHistory.pending, (state) => {
-        state.fetchTrackToHistoryLoading = true;
-        state.fetchTrackToHistoryError = null;
+      .addCase(fetchTracksHistory.pending, (state) => {
+        state.trackHistoryFetching = true;
+        state.fetchTrackHistoryError = null;
       })
-      .addCase(
-        fetchTrackHistory.fulfilled,
-        (state, { payload: tracksHistory }) => {
-          state.fetchTrackToHistoryLoading = false;
-          state.items = tracksHistory;
-        },
-      )
-      .addCase(fetchTrackHistory.rejected, (state, { payload: error }) => {
-        state.fetchTrackToHistoryLoading = false;
-        state.fetchTrackToHistoryError = error || null;
+      .addCase(fetchTracksHistory.fulfilled, (state, { payload: tracksHistory }) => {
+        state.trackHistoryFetching = false;
+        state.items = tracksHistory;
+      })
+      .addCase(fetchTracksHistory.rejected, (state, { payload: error }) => {
+        state.trackHistoryFetching = false;
+        state.fetchTrackHistoryError = error || null;
       });
   },
 });
 export const tracksHistoryReducer = tracksHistorySlice.reducer;
-export const selectAddingTrackId = (state: RootState) =>
-  state.tracksHistory.addingTrackId;
+export const selectAddingTrackId = (state: RootState) => state.tracksHistory.addingTrackId;
+export const selectTracksHistory = (state: RootState) => state.tracksHistory.items;
+export const selectTrackFetching = (state: RootState) => state.tracksHistory.trackHistoryFetching;
