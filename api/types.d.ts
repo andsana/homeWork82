@@ -18,12 +18,13 @@ export interface UserFields {
   username: string;
   password: string;
   token: string;
+  role: string;
 }
 
 export interface ArtistMutation {
   title: string;
-  image: string;
   information: string;
+  image: string | null;
 }
 
 export interface TrackHistoryMutation {
@@ -31,7 +32,7 @@ export interface TrackHistoryMutation {
   artistName: string;
   trackTitle: string;
   datetime: date;
-  albumImage: string;
+  albumImage: string | null;
 }
 
 interface UserMethods {
@@ -55,7 +56,7 @@ export interface ITrack {
 export interface IAlbum {
   artist: IArtist;
   title: string;
-  image: string;
+  image: string | null;
 }
 
 export interface IArtist {
