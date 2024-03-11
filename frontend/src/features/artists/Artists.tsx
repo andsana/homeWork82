@@ -3,18 +3,40 @@ import { Grid, Typography } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { fetchArtists } from './artistsThunks';
-import { selectArtists, selectArtistsLoading } from './artistsSlise.ts';
-import ArtistItem from './ArtistItem.tsx';
+import { deleteArtist, fetchArtists, toggleArtistPublishStatus } from './artistsThunks';
+import {
+  selectArtists,
+  selectArtistsLoading,
+  selectDeleteLoading,
+  selectToggleArtistPublishStatusLoading,
+} from './artistsSlise.ts';
+import ArtistItem from './components/ArtistItem.tsx';
 
 const Artists = () => {
   const dispatch = useAppDispatch();
   const artists = useAppSelector(selectArtists);
   const isLoadingArtists = useAppSelector(selectArtistsLoading);
+  const isLoadingDelete = useAppSelector(selectDeleteLoading);
+  const isLoadingPublish = useAppSelector(selectToggleArtistPublishStatusLoading);
 
   useEffect(() => {
     dispatch(fetchArtists());
   }, [dispatch]);
+
+  const handleDelete = (artistId: string) => {
+    if (artistId && confirm('Are you sure you want to delete this artist?')) {
+      dispatch(deleteArtist(artistId));
+    }
+  };
+
+  const handleTogglePublish = (artistId: string) => {
+    if (
+      artistId &&
+      confirm('Are you sure you want to change the publication status of this artist?')
+    ) {
+      dispatch(toggleArtistPublishStatus(artistId));
+    }
+  };
 
   if (isLoadingArtists) {
     return <CircularProgress />;
@@ -30,9 +52,14 @@ const Artists = () => {
           artists.map((artist) => (
             <ArtistItem
               key={artist._id}
-              id={artist._id}
+              artistId={artist._id}
               title={artist.title}
+              information={artist.information}
               image={artist.image}
+              onDelete={() => handleDelete(artist._id)}
+              ontogglePublish={() => handleTogglePublish(artist._id)}
+              isLoading={artist._id === isLoadingDelete}
+              isPublish={artist._id === isLoadingPublish}
             />
           ))
         ) : (

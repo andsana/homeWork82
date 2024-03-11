@@ -1,7 +1,22 @@
 export interface Artist {
   _id: string;
+  user: User;
   title: string;
   image: string | null;
+  information: string;
+  isPublished: boolean;
+}
+
+export interface ArtistMutation {
+  title: string;
+  information: string;
+  image: File | string | null;
+  isPublished: boolean;
+}
+
+export interface UpdateArtistArg {
+  artistId: string;
+  artistMutation: ArtistMutation;
 }
 
 export interface Album {
@@ -36,6 +51,7 @@ export interface User {
   _id: string;
   username: string;
   token: string;
+  role: string;
 }
 
 export interface ValidationError {

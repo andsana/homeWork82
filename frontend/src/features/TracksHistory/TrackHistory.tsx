@@ -38,9 +38,11 @@ const TrackHistory = () => {
   return (
     <Grid container spacing={2} direction="column" alignItems="center" justifyContent="center">
       <Grid item xs={12}>
-        <Typography variant="h4" gutterBottom>
-          История прослушивания
-        </Typography>
+        {tracksHistory.length > 0 && (
+          <Typography variant="h4" gutterBottom>
+            Track history
+          </Typography>
+        )}
         <Grid item container spacing={2}>
           {tracksHistory.length > 0 ? (
             tracksHistory.map((trackHistory) => (
@@ -53,7 +55,7 @@ const TrackHistory = () => {
               />
             ))
           ) : (
-            <Typography>No tracks available</Typography>
+            <Typography variant="h4">No tracks available</Typography>
           )}
         </Grid>
       </Grid>

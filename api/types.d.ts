@@ -25,6 +25,8 @@ export interface ArtistMutation {
   title: string;
   information: string;
   image: string | null;
+  isPublished: boolean;
+  user: string;
 }
 
 export interface TrackHistoryMutation {

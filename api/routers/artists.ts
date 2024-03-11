@@ -5,19 +5,34 @@ import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import { imagesUpload } from '../multer';
 import { ArtistMutation } from '../types';
+import user from '../middleware/user';
 
 const artistsRouter = express.Router();
 
-artistsRouter.get('/', async (_req, res, next) => {
+artistsRouter.get('/', user, async (req: RequestWithUser, res, next) => {
   try {
-    const artists = await Artist.find();
+    let artists;
+
+    if (req.user && req.user.role === 'admin') {
+      artists = await Artist.find({});
+    } else if (req.user) {
+      artists = await Artist.find({});
+      artists = artists.filter(
+        (artist) =>
+          artist.isPublished ||
+          artist.user.toString() === req.user?._id.toString(),
+      );
+    } else {
+      artists = await Artist.find({ isPublished: true });
+    }
+
     return res.send(artists);
   } catch (e) {
     next(e);
   }
 });
 
-artistsRouter.get('/:id', async (req, res, next) => {
+artistsRouter.get('/:id', user, async (req: RequestWithUser, res, next) => {
   try {
     let _id: Types.ObjectId;
     try {
@@ -32,7 +47,17 @@ artistsRouter.get('/:id', async (req, res, next) => {
       return res.status(404).send({ error: 'Not found!' });
     }
 
-    res.send(artist);
+    if (!artist.isPublished) {
+      if (
+        !req.user ||
+        (artist.user.toString() !== req.user._id.toString() &&
+          req.user.role !== 'admin')
+      ) {
+        return res.status(403).send({ error: 'Access denied!' });
+      }
+    }
+
+    return res.send(artist);
   } catch (e) {
     next(e);
   }
@@ -43,12 +68,18 @@ artistsRouter.post(
   auth,
   permit('admin', 'user'),
   imagesUpload.single('image'),
-  async (req, res, next) => {
+  async (req: RequestWithUser, res, next) => {
     try {
+      if (!req.user) {
+        return res.status(401).send({ error: 'Unauthorized' });
+      }
+
       const artistData: ArtistMutation = {
+        user: req.user._id.toString(),
         title: req.body.title,
         information: req.body.description,
         image: req.file ? req.file.filename : null,
+        isPublished: req.body.isPublished,
       };
 
       const artist = new Artist(artistData);
@@ -66,7 +97,7 @@ artistsRouter.post(
 );
 
 artistsRouter.patch(
-  '/:id/togglePublished',
+  '/:id',
   auth,
   permit('admin'),
   imagesUpload.single('image'),
@@ -91,7 +122,7 @@ artistsRouter.patch(
           $set: {
             title: req.body.title,
             information: req.body.description,
-            isPublished: !artist.isPublished,
+            isPublished: req.body.isPublished,
             image,
           },
         },
@@ -102,7 +133,7 @@ artistsRouter.patch(
       }
 
       return res.send({
-        message: 'Ok. Publication status toggled successfully.',
+        message: 'Ok.',
       });
     } catch (e) {
       if (e instanceof mongoose.Error.ValidationError) {
@@ -143,6 +174,30 @@ artistsRouter.delete(
     } catch (e) {
       if (e instanceof mongoose.Error.ValidationError) {
         return res.status(400).send({ error: 'Invalid artist ID format!' });
+      }
+      next(e);
+    }
+  },
+);
+
+artistsRouter.patch(
+  '/:id/togglePublished',
+  auth,
+  permit('admin'),
+  async (req, res, next) => {
+    try {
+      const artist = await Artist.findById(req.params.id);
+      if (!artist) {
+        return res.status(404).send({ message: 'Artist not found!' });
+      }
+
+      artist.isPublished = !artist.isPublished;
+      await artist.save();
+
+      res.send({ message: 'Publication status successfully updated.', artist });
+    } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError) {
+        return res.status(422).send(e);
       }
       next(e);
     }
