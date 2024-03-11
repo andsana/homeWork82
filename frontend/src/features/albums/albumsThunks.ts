@@ -45,7 +45,6 @@ export const createAlbum = createAsyncThunk<null, AlbumMutation>(
             }
           }
         }
-        console.log('formdata', formData);
       });
 
       const response = await axiosApi.post('/albums', formData, config);

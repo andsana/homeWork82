@@ -1,26 +1,50 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardActions, CardMedia, Grid, styled } from '@mui/material';
+import {
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Grid,
+  Typography,
+} from '@mui/material';
 
 import imageNotAvailable from '../../../assets/images/image_not_available.png';
 import { apiURL } from '../../../constants.ts';
 import './AlbumItem.css';
-
-const ImageCardMedia = styled(CardMedia)({
-  height: 0,
-  paddingTop: '56.25%',
-  size: 'cover',
-});
+import { useAppSelector } from '../../../app/hooks.ts';
+import { selectUser } from '../../users/usersSlice.ts';
+import { LoadingButton } from '@mui/lab';
+import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Props {
-  id: string;
   title: string;
+  releaseYear: string;
   image: string | null;
-  releaseYear: number;
-  trackCount: number;
+  isPublished: boolean;
+  artistId: string;
+  userId: string;
+  onDelete: (artistId: string) => void;
+  ontogglePublish: (artistId: string) => void;
+  isLoading: boolean;
+  isPublish: boolean;
 }
 
-const AlbumItem: React.FC<Props> = ({ id, title, image, releaseYear, trackCount }) => {
+const AlbumItem: React.FC<Props> = ({
+  title,
+  releaseYear,
+  image,
+  isPublished,
+  isPublish,
+  onDelete,
+  ontogglePublish,
+  artistId,
+  userId,
+  isLoading,
+}) => {
+  const user = useAppSelector(selectUser);
   let cardImage = imageNotAvailable;
 
   if (image) {
@@ -28,17 +52,72 @@ const AlbumItem: React.FC<Props> = ({ id, title, image, releaseYear, trackCount 
   }
 
   return (
-    <Grid item sm md={6} lg={4}>
-      <Link to={`/tracks?album=${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-        <Card className="card-album">
-          <ImageCardMedia image={cardImage} title={title} />
-          <CardActions className="card-actions">
-            <span className="card-item card-album-title">{title}</span>
-            <span>Number of tracks: {trackCount}</span>
-            <span className="card-item card-album-releaseYear">{releaseYear}</span>
-          </CardActions>
-        </Card>
-      </Link>
+    <Grid item xs={12} sm={6} md={3} lg={3}>
+      <Card
+        sx={{
+          maxWidth: 345,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          height: '100%',
+        }}
+      >
+        <Link to={`/albums/${artistId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <CardActionArea>
+            <CardMedia
+              component="img"
+              height="200"
+              image={cardImage}
+              alt={title}
+              sx={{
+                size: 'cover',
+                width: '100%',
+              }}
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                {title}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {releaseYear}
+              </Typography>
+              {user && (user._id === userId || user.role === 'admin') && (
+                <Typography variant="body2" color="text.secondary">
+                  {isPublished ? '' : 'not published'}
+                </Typography>
+              )}
+            </CardContent>
+          </CardActionArea>
+        </Link>
+        <CardActions sx={{ mt: 'auto' }}>
+          {user && user.role === 'admin' && (
+            <LoadingButton
+              size="small"
+              color="primary"
+              onClick={() => ontogglePublish(artistId)}
+              loading={isPublish}
+              loadingPosition="start"
+              startIcon={isPublished ? <SaveIcon /> : <DeleteIcon />}
+              variant="contained"
+            >
+              <span>{isPublished ? 'Unpublish' : 'Publish'}</span>
+            </LoadingButton>
+          )}
+          {user && !isPublished && (
+            <LoadingButton
+              size="small"
+              color="primary"
+              onClick={() => onDelete(artistId)}
+              loading={isLoading}
+              loadingPosition="start"
+              startIcon={<DeleteIcon />}
+              variant="contained"
+            >
+              <span>Delete</span>
+            </LoadingButton>
+          )}
+        </CardActions>
+      </Card>
     </Grid>
   );
 };
