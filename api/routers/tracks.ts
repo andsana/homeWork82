@@ -6,9 +6,36 @@ import Track from '../models/Track';
 import Album from '../models/Album';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
+import user from '../middleware/user';
+import Artist from '../models/Artist';
+import artistsRouter from './artists';
 
 const tracksRouter = Router();
-tracksRouter.get('/', async (req, res, next) => {
+
+artistsRouter.get('/', user, async (req: RequestWithUser, res, next) => {
+  try {
+    let artists;
+
+    if (req.user && req.user.role === 'admin') {
+      artists = await Artist.find({});
+    } else if (req.user) {
+      artists = await Artist.find({});
+      artists = artists.filter(
+        (artist) =>
+          artist.isPublished ||
+          artist.user.toString() === req.user?._id.toString(),
+      );
+    } else {
+      artists = await Artist.find({ isPublished: true });
+    }
+
+    return res.send(artists);
+  } catch (e) {
+    next(e);
+  }
+});
+
+tracksRouter.get('/', user, async (req: RequestWithUser, res, next) => {
   try {
     let query = {};
     const albumId = req.query.album;
