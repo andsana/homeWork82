@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { CircularProgress, Grid, Typography } from '@mui/material';
-import TrackItem from './TrackItem.tsx';
+import TrackItem from './components/TrackItem.tsx';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
 import { fetchTracks } from './tracksThunks';
 import { selectTracks, selectTracksFetching } from './tracksSlice.ts';
@@ -22,7 +22,9 @@ const Tracks = () => {
   const artistTitle = tracks.length > 0 ? tracks[0].album.artist.title : 'Unknown Artist';
 
   useEffect(() => {
-    dispatch(fetchTracks(albumId));
+    if (albumId) {
+      dispatch(fetchTracks(albumId));
+    }
   }, [dispatch, albumId]);
 
   const handlePlay = (trackId: string, link: string) => {

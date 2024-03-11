@@ -4,6 +4,8 @@ import mongoose, { Types } from 'mongoose';
 import { TrackMutation } from '../types';
 import Track from '../models/Track';
 import Album from '../models/Album';
+import auth, { RequestWithUser } from '../middleware/auth';
+import permit from '../middleware/permit';
 
 const tracksRouter = Router();
 tracksRouter.get('/', async (req, res, next) => {
@@ -71,26 +73,36 @@ tracksRouter.get('/:id', async (req, res, next) => {
   }
 });
 
-tracksRouter.post('/', async (req, res, next) => {
-  try {
-    const trackData: TrackMutation = {
-      number: req.body.number,
-      album: req.body.album,
-      title: req.body.title,
-      duration: req.body.duration,
-    };
+tracksRouter.post(
+  '/',
+  auth,
+  permit('admin', 'user'),
+  async (req: RequestWithUser, res, next) => {
+    try {
+      if (!req.user) {
+        return res.status(401).send({ error: 'Unauthorized' });
+      }
 
-    const track = new Track(trackData);
-    await track.save();
+      const trackData: TrackMutation = {
+        user: req.user._id.toString(),
+        number: req.body.number,
+        album: req.body.album,
+        title: req.body.title,
+        duration: req.body.duration,
+      };
 
-    res.send(track);
-  } catch (e) {
-    if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(422).send(e);
+      const track = new Track(trackData);
+      await track.save();
+
+      res.send(track);
+    } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError) {
+        return res.status(422).send(e);
+      }
+
+      next(e);
     }
-
-    next(e);
-  }
-});
+  },
+);
 
 export default tracksRouter;

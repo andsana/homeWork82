@@ -54,7 +54,6 @@ const AlbumForm: React.FC<Props> = ({
     e.preventDefault();
     onSubmit(state);
   };
-
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 

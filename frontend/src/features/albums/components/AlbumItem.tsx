@@ -12,7 +12,6 @@ import {
 
 import imageNotAvailable from '../../../assets/images/image_not_available.png';
 import { apiURL } from '../../../constants.ts';
-import './AlbumItem.css';
 import { useAppSelector } from '../../../app/hooks.ts';
 import { selectUser } from '../../users/usersSlice.ts';
 import { LoadingButton } from '@mui/lab';
@@ -21,15 +20,17 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Props {
   title: string;
-  releaseYear: string;
+  releaseYear: number;
   image: string | null;
   isPublished: boolean;
   artistId: string;
+  albumId: string;
   userId: string;
-  onDelete: (artistId: string) => void;
-  ontogglePublish: (artistId: string) => void;
+  onDelete: (albumId: string) => void;
+  ontogglePublish: (albumId: string) => void;
   isLoading: boolean;
   isPublish: boolean;
+  trackCount: number;
 }
 
 const AlbumItem: React.FC<Props> = ({
@@ -40,9 +41,10 @@ const AlbumItem: React.FC<Props> = ({
   isPublish,
   onDelete,
   ontogglePublish,
-  artistId,
+  albumId,
   userId,
   isLoading,
+  trackCount,
 }) => {
   const user = useAppSelector(selectUser);
   let cardImage = imageNotAvailable;
@@ -62,7 +64,7 @@ const AlbumItem: React.FC<Props> = ({
           height: '100%',
         }}
       >
-        <Link to={`/albums/${artistId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link to={`/tracks?album=${albumId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardActionArea>
             <CardMedia
               component="img"
@@ -81,6 +83,9 @@ const AlbumItem: React.FC<Props> = ({
               <Typography variant="body2" color="text.secondary">
                 {releaseYear}
               </Typography>
+              <Typography variant="body2" color="text.secondary">
+                number of tracks: {trackCount}
+              </Typography>
               {user && (user._id === userId || user.role === 'admin') && (
                 <Typography variant="body2" color="text.secondary">
                   {isPublished ? '' : 'not published'}
@@ -94,7 +99,7 @@ const AlbumItem: React.FC<Props> = ({
             <LoadingButton
               size="small"
               color="primary"
-              onClick={() => ontogglePublish(artistId)}
+              onClick={() => ontogglePublish(albumId)}
               loading={isPublish}
               loadingPosition="start"
               startIcon={isPublished ? <SaveIcon /> : <DeleteIcon />}
@@ -107,7 +112,7 @@ const AlbumItem: React.FC<Props> = ({
             <LoadingButton
               size="small"
               color="primary"
-              onClick={() => onDelete(artistId)}
+              onClick={() => onDelete(albumId)}
               loading={isLoading}
               loadingPosition="start"
               startIcon={<DeleteIcon />}

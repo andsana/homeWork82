@@ -6,10 +6,11 @@ import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import { imagesUpload } from '../multer';
 import { AlbumMutation } from '../types';
+import user from '../middleware/user';
 
 const albumsRouter = Router();
 
-albumsRouter.get('/', async (req, res, next) => {
+albumsRouter.get('/', user, async (req: RequestWithUser, res, next) => {
   try {
     let query = {};
     const artistId = req.query.artist;
@@ -18,7 +19,15 @@ albumsRouter.get('/', async (req, res, next) => {
       query = { artist: artistId };
     }
 
-    const albums = await Album.find(query).sort({ releaseYear: -1 });
+    let albums = await Album.find(query).sort({ releaseYear: -1 });
+
+    if (req.user && req.user.role !== 'admin') {
+      albums = albums.filter(
+        (album) =>
+          album.isPublished ||
+          album.user.toString() === req.user?._id.toString(),
+      );
+    }
 
     const albumsData = await Promise.all(
       albums.map(async (album) => {
@@ -36,9 +45,9 @@ albumsRouter.get('/', async (req, res, next) => {
   }
 });
 
-albumsRouter.get('/:id', async (req, res, next) => {
+albumsRouter.get('/:id', user, async (req: RequestWithUser, res, next) => {
   try {
-    let _id: Types.ObjectId;
+    let _id;
     try {
       _id = new Types.ObjectId(req.params.id);
     } catch {
@@ -52,6 +61,15 @@ albumsRouter.get('/:id', async (req, res, next) => {
 
     if (!album) {
       return res.status(404).send({ error: 'Not found!' });
+    }
+
+    if (
+      !album.isPublished &&
+      (!req.user ||
+        (album.user.toString() !== req.user._id.toString() &&
+          req.user.role !== 'admin'))
+    ) {
+      return res.status(403).send({ error: 'Access denied!' });
     }
 
     res.send(album);

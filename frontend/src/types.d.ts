@@ -26,6 +26,8 @@ export interface Album {
   image: string;
   trackCount: number;
   artist: Artist;
+  isPublished: boolean;
+  user: Album;
 }
 
 export interface AlbumMutation {
@@ -43,6 +45,16 @@ export interface Track {
   duration: string;
   album: Album;
   link: string;
+}
+
+export interface TrackMutation {
+  number: string;
+  title: string;
+  duration: string;
+  link: string;
+  album: string;
+  artist: string;
+  isPublished: boolean;
 }
 
 export interface RegisterMutation {

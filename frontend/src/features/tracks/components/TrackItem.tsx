@@ -3,8 +3,8 @@ import { Box, Card, CardActions, CardContent, Grid, Typography } from '@mui/mate
 import './TrackItem.css';
 import { LoadingButton } from '@mui/lab';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useAppSelector } from '../../app/hooks.ts';
-import { selectUser } from '../users/usersSlice.ts';
+import { useAppSelector } from '../../../app/hooks.ts';
+import { selectUser } from '../../users/usersSlice.ts';
 
 interface Props {
   number: number;

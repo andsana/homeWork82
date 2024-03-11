@@ -75,6 +75,7 @@ const run = async () => {
         releaseYear: 1991,
         image: 'fixtures/nevermind.jpg',
         isPublished: true,
+        user: user,
       },
       {
         artist: nirvana,
@@ -82,6 +83,7 @@ const run = async () => {
         releaseYear: 1993,
         image: 'fixtures/in-utero.jpg',
         isPublished: true,
+        user: user,
       },
       {
         artist: linkinPark,
@@ -89,6 +91,7 @@ const run = async () => {
         releaseYear: 2007,
         image: 'fixtures/meteora.jpg',
         isPublished: true,
+        user: user,
       },
       {
         artist: linkinPark,
@@ -96,12 +99,14 @@ const run = async () => {
         releaseYear: 2000,
         image: 'fixtures/hybrid-theory.jpg',
         isPublished: true,
+        user: user,
       },
       {
         artist: scorpions,
         title: 'Love at First Sting',
         releaseYear: 1984,
         image: 'fixtures/albumScorp.jpg',
+        user: user,
       },
     );
 
@@ -113,6 +118,7 @@ const run = async () => {
       duration: '5:01',
       link: 'https://www.youtube.com/watch?v=hTWKbfoikeg',
       isPublished: true,
+      user: user,
     },
     {
       album: nevermind,
@@ -120,6 +126,7 @@ const run = async () => {
       title: 'In Bloom',
       duration: '4:14',
       isPublished: true,
+      user: user,
     },
     {
       album: nevermind,
@@ -127,6 +134,7 @@ const run = async () => {
       title: 'Come as You Are',
       duration: '3:38',
       isPublished: true,
+      user: user,
     },
     {
       album: nevermind,
@@ -134,6 +142,7 @@ const run = async () => {
       title: 'Breed',
       duration: '3:03',
       isPublished: true,
+      user: user,
     },
     {
       album: nevermind,
@@ -141,6 +150,7 @@ const run = async () => {
       title: 'Lithium',
       duration: '4:16',
       isPublished: true,
+      user: user,
     },
     {
       album: inUtero,
@@ -148,6 +158,7 @@ const run = async () => {
       title: 'Serve the Servants',
       duration: '3:36',
       isPublished: true,
+      user: user,
     },
     {
       album: inUtero,
@@ -155,6 +166,7 @@ const run = async () => {
       title: 'Scentless Apprentice',
       duration: '3:48',
       isPublished: true,
+      user: user,
     },
     {
       album: inUtero,
@@ -162,6 +174,7 @@ const run = async () => {
       title: 'Heart-Shaped Box',
       duration: '4:41',
       isPublished: true,
+      user: user,
     },
     {
       album: inUtero,
@@ -176,6 +189,7 @@ const run = async () => {
       title: 'Frances Farmer Will Have Her Revenge on Seattle',
       duration: '4:09',
       isPublished: true,
+      user: user,
     },
     {
       album: meteora,
@@ -183,6 +197,7 @@ const run = async () => {
       title: "Don't Stay",
       duration: '3:16',
       isPublished: true,
+      user: user,
     },
     {
       album: meteora,
@@ -190,6 +205,7 @@ const run = async () => {
       title: 'Somewhere I Belong',
       duration: '4:09',
       isPublished: true,
+      user: user,
     },
     {
       album: meteora,
@@ -197,6 +213,7 @@ const run = async () => {
       title: 'Lying from You',
       duration: '2:57',
       isPublished: true,
+      user: user,
     },
     {
       album: meteora,
@@ -204,6 +221,7 @@ const run = async () => {
       title: 'Faint',
       duration: '3:41',
       isPublished: true,
+      user: user,
     },
     {
       album: meteora,
@@ -211,6 +229,7 @@ const run = async () => {
       title: 'Breaking the Habit',
       duration: '4:15',
       isPublished: true,
+      user: user,
     },
     {
       album: hybridTheory,
@@ -218,6 +237,7 @@ const run = async () => {
       title: 'Papercut',
       duration: '3:04',
       isPublished: true,
+      user: user,
     },
     {
       album: hybridTheory,
@@ -225,6 +245,7 @@ const run = async () => {
       title: 'One Step Closer',
       duration: '2:35',
       isPublished: true,
+      user: user,
     },
     {
       album: hybridTheory,
@@ -232,6 +253,7 @@ const run = async () => {
       title: 'With You',
       duration: '3:23',
       isPublished: true,
+      user: user,
     },
     {
       album: hybridTheory,
@@ -239,6 +261,7 @@ const run = async () => {
       title: 'Points of Authority',
       duration: '3:20',
       isPublished: true,
+      user: user,
     },
     {
       album: hybridTheory,
@@ -246,6 +269,7 @@ const run = async () => {
       title: 'Crawling',
       duration: '3:29',
       isPublished: true,
+      user: user,
     },
     {
       album: loveAtFirstSting,
@@ -253,6 +277,7 @@ const run = async () => {
       title: 'Still Loving You',
       duration: '6:26',
       isPublished: false,
+      user: user,
     },
     {
       album: loveAtFirstSting,
@@ -260,6 +285,7 @@ const run = async () => {
       title: 'Big City Nights',
       duration: '4:08',
       isPublished: false,
+      user: user,
     },
     {
       album: loveAtFirstSting,
@@ -267,6 +293,7 @@ const run = async () => {
       title: 'As Soon as the Good Times Roll',
       duration: '5:01',
       isPublished: false,
+      user: user,
     },
   ]);
 

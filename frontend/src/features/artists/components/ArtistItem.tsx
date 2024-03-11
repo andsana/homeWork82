@@ -62,7 +62,10 @@ const ArtistItem: React.FC<Props> = ({
           height: '100%',
         }}
       >
-        <Link to={`/albums/${artistId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          to={`/albums?artist=${artistId}`}
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
           <CardActionArea>
             <CardMedia
               component="img"
@@ -79,7 +82,7 @@ const ArtistItem: React.FC<Props> = ({
                 {title}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {information}
+                information: {information}
               </Typography>
               {user && (user._id === userId || user.role === 'admin') && (
                 <Typography variant="body2" color="text.secondary">

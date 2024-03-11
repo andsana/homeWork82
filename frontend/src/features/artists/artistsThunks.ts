@@ -11,17 +11,13 @@ export const fetchArtists = createAsyncThunk<
 >('artists/fetchAll', async (_, { getState, rejectWithValue }) => {
   const token = getState().users.user?.token;
 
-  if (!token) {
-    return rejectWithValue({ error: 'User is not authenticated' });
-  }
-
   try {
     const response = await axiosApi.get('/artists', {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     return response.data;
   } catch (e) {
-    if (isAxiosError(e) && e.response) {
+    if (axios.isAxiosError(e) && e.response) {
       return rejectWithValue(e.response.data);
     }
     throw e;
@@ -71,7 +67,6 @@ export const createArtist = createAsyncThunk<null, ArtistMutation>(
             }
           }
         }
-        console.log('formdata', formData);
       });
 
       const response = await axiosApi.post('/artists', formData, config);
