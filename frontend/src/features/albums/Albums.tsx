@@ -6,7 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { fetchAlbums } from './albumsThunks';
 import { selectAlbums, selectAlbumsFetching } from './albumsSlise.ts';
-import AlbumItem from './AlbumItem.tsx';
+import AlbumItem from './components/AlbumItem.tsx';
 import { selectArtistById } from '../artists/artistsSlise.ts';
 import { fetchArtists } from '../artists/artistsThunks.ts';
 
@@ -37,9 +37,7 @@ const Albums = () => {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid item container>
-        <Typography variant="h4">
-          {artist?.title || 'No artist title'}
-        </Typography>
+        <Typography variant="h4">{artist?.title || 'No artist title'}</Typography>
       </Grid>
       <Grid item container spacing={2}>
         {albums.length > 0 ? (

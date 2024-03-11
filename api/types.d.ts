@@ -5,6 +5,8 @@ export interface AlbumMutation {
   title: string;
   releaseYear: number;
   image: string | null;
+  user: string;
+  isPublished: string;
 }
 
 export interface TrackMutation {

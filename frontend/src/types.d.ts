@@ -28,6 +28,14 @@ export interface Album {
   artist: Artist;
 }
 
+export interface AlbumMutation {
+  title: string;
+  artist: string;
+  releaseYear: string;
+  image: File | string | null;
+  isPublished: boolean;
+}
+
 export interface Track {
   _id: string;
   number: number;

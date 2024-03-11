@@ -1,7 +1,11 @@
 import { Router } from 'express';
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import Album from '../models/Album';
 import Track from '../models/Track';
+import auth, { RequestWithUser } from '../middleware/auth';
+import permit from '../middleware/permit';
+import { imagesUpload } from '../multer';
+import { AlbumMutation } from '../types';
 
 const albumsRouter = Router();
 
@@ -55,5 +59,39 @@ albumsRouter.get('/:id', async (req, res, next) => {
     next(e);
   }
 });
+
+albumsRouter.post(
+  '/',
+  auth,
+  permit('admin', 'user'),
+  imagesUpload.single('image'),
+  async (req: RequestWithUser, res, next) => {
+    try {
+      if (!req.user) {
+        return res.status(401).send({ error: 'Unauthorized' });
+      }
+
+      const albumData: AlbumMutation = {
+        user: req.user._id.toString(),
+        artist: req.body.artist,
+        title: req.body.title,
+        releaseYear: parseFloat(req.body.releaseYear),
+        image: req.file ? req.file.filename : null,
+        isPublished: req.body.isPublished,
+      };
+
+      const album = new Album(albumData);
+      await album.save();
+
+      res.send(album);
+    } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError) {
+        return res.status(422).send(e);
+      }
+
+      next(e);
+    }
+  },
+);
 
 export default albumsRouter;
