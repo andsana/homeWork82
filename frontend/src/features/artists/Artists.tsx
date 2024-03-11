@@ -56,10 +56,12 @@ const Artists = () => {
               title={artist.title}
               information={artist.information}
               image={artist.image}
+              isPublished={artist.isPublished}
               onDelete={() => handleDelete(artist._id)}
               ontogglePublish={() => handleTogglePublish(artist._id)}
               isLoading={artist._id === isLoadingDelete}
               isPublish={artist._id === isLoadingPublish}
+              userId={artist.user._id}
             />
           ))
         ) : (

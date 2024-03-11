@@ -23,7 +23,9 @@ interface Props {
   title: string;
   information: string;
   image: string | null;
+  isPublished: boolean;
   artistId: string;
+  userId: string;
   onDelete: (artistId: string) => void;
   ontogglePublish: (artistId: string) => void;
   isLoading: boolean;
@@ -34,10 +36,12 @@ const ArtistItem: React.FC<Props> = ({
   title,
   information,
   image,
+  isPublished,
   isPublish,
   onDelete,
   ontogglePublish,
   artistId,
+  userId,
   isLoading,
 }) => {
   const user = useAppSelector(selectUser);
@@ -77,24 +81,29 @@ const ArtistItem: React.FC<Props> = ({
               <Typography variant="body2" color="text.secondary">
                 {information}
               </Typography>
+              {user && (user._id === userId || user.role === 'admin') && (
+                <Typography variant="body2" color="text.secondary">
+                  {isPublished ? '' : 'not published'}
+                </Typography>
+              )}
             </CardContent>
           </CardActionArea>
         </Link>
         <CardActions sx={{ mt: 'auto' }}>
-          {!isPublish && user && user.role === 'admin' && (
+          {user && user.role === 'admin' && (
             <LoadingButton
               size="small"
               color="primary"
               onClick={() => ontogglePublish(artistId)}
               loading={isPublish}
               loadingPosition="start"
-              startIcon={<SaveIcon />}
+              startIcon={isPublished ? <SaveIcon /> : <DeleteIcon />}
               variant="contained"
             >
-              <span>Publish</span>
+              <span>{isPublished ? 'Unpublish' : 'Publish'}</span>
             </LoadingButton>
           )}
-          {user && !isPublish && (
+          {user && !isPublished && (
             <LoadingButton
               size="small"
               color="primary"
