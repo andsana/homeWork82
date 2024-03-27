@@ -40,7 +40,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
         Add track
       </Button>
       <Button color="inherit" onClick={handleClick}>
-        Hello, {user.username}!
+        Hello, {user.email}!
       </Button>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose} keepMounted>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>

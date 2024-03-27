@@ -93,7 +93,7 @@ const ArtistItem: React.FC<Props> = ({
           </CardActionArea>
         </Link>
         <CardActions sx={{ mt: 'auto' }}>
-          {user && user.role === 'admin' && (
+          {user && user.role === 'admin' ? (
             <LoadingButton
               size="small"
               color="primary"
@@ -105,6 +105,10 @@ const ArtistItem: React.FC<Props> = ({
             >
               <span>{isPublished ? 'Unpublish' : 'Publish'}</span>
             </LoadingButton>
+          ) : (
+            <Typography variant="body2" color="primary">
+              {isPublished ? '' : 'No publish'}
+            </Typography>
           )}
           {user && !isPublished && (
             <LoadingButton

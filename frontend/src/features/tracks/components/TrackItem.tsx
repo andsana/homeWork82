@@ -7,7 +7,6 @@ import { useAppSelector } from '../../../app/hooks.ts';
 import { selectUser } from '../../users/usersSlice.ts';
 
 interface Props {
-  number: number;
   title: string;
   duration: string;
   trackId: string;
@@ -16,15 +15,7 @@ interface Props {
   link: string;
 }
 
-const TrackItem: React.FC<Props> = ({
-  number,
-  title,
-  duration,
-  trackId,
-  onPlay,
-  isLoading,
-  link,
-}) => {
+const TrackItem: React.FC<Props> = ({ title, duration, trackId, onPlay, isLoading, link }) => {
   const user = useAppSelector(selectUser);
 
   return (
@@ -48,9 +39,6 @@ const TrackItem: React.FC<Props> = ({
           <CardContent sx={{ flex: '1 0 auto' }}>
             <Typography component="div" variant="h5">
               {title}
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary" component="div">
-              Track number: {number}
             </Typography>
           </CardContent>
         </Box>

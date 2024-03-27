@@ -1,67 +1,136 @@
 import express from 'express';
 import Artist from '../models/Artist';
-import mongoose, { Types } from 'mongoose';
+import mongoose from 'mongoose';
 import auth, { RequestWithUser } from '../middleware/auth';
-import permit from '../middleware/permit';
-import { imagesUpload } from '../multer';
 import { ArtistMutation } from '../types';
 import user from '../middleware/user';
+import permit from '../middleware/permit';
+import { imagesUpload } from '../multer';
 
 const artistsRouter = express.Router();
 
 artistsRouter.get('/', user, async (req: RequestWithUser, res, next) => {
   try {
-    let artists;
+    const user = req.user;
+    let filter = {};
 
-    if (req.user && req.user.role === 'admin') {
-      artists = await Artist.find({});
-    } else if (req.user) {
-      artists = await Artist.find({});
-      artists = artists.filter(
-        (artist) =>
-          artist.isPublished ||
-          artist.user.toString() === req.user?._id.toString(),
-      );
+    if (user && user.role === 'admin') {
+      filter = {};
+    } else if (user) {
+      filter = {
+        $or: [{ isPublished: true }, { user: user._id }],
+      };
     } else {
-      artists = await Artist.find({ isPublished: true });
+      filter = { isPublished: true };
     }
 
+    const artists = await Artist.find(filter);
     return res.send(artists);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 });
 
-artistsRouter.get('/:id', user, async (req: RequestWithUser, res, next) => {
-  try {
-    let _id: Types.ObjectId;
+// artistsRouter.get('/:id', user, async (req: RequestWithUser, res, next) => {
+//   try {
+//     const artistId = req.params.id;
+//     const user = req.user;
+//     let filter = {};
+//
+//     if (user && user.role === 'admin') {
+//       filter = {};
+//     } else if (user) {
+//       filter = {
+//         $or: [{ isPublished: true }, { user: user._id }],
+//       };
+//     } else {
+//       filter = { isPublished: true };
+//     }
+//
+//     const artist = await Artist.findOne({ _id: artistId }).find(filter);
+//
+//     if (!artist) {
+//       return res.status(404).send({ error: 'Not found!' });
+//     }
+//
+//     return res.send(artist);
+//   } catch (e) {
+//     return next(e);
+//   }
+// });
+
+artistsRouter.delete(
+  '/:id',
+  auth,
+  permit('admin', 'user'),
+  async (req: RequestWithUser, res, next) => {
     try {
-      _id = new Types.ObjectId(req.params.id);
-    } catch {
-      return res.status(404).send({ error: 'Wrong ObjectId!' });
-    }
+      const artistId = req.params.id;
+      const user = req.user;
 
-    const artist = await Artist.findById(_id);
+      const artist = await Artist.findById(artistId);
 
-    if (!artist) {
-      return res.status(404).send({ error: 'Not found!' });
-    }
-
-    if (!artist.isPublished) {
-      if (
-        !req.user ||
-        (artist.user.toString() !== req.user._id.toString() &&
-          req.user.role !== 'admin')
-      ) {
-        return res.status(403).send({ error: 'Access denied!' });
+      if (!artist) {
+        return res.status(404).send({ error: 'Not found!' });
       }
-    }
 
-    return res.send(artist);
-  } catch (e) {
-    next(e);
-  }
-});
+      if ((user && user.role === 'admin') || !artist.isPublished) {
+        await artist.deleteOne();
+      }
+
+      return res.send(artist);
+    } catch (e) {
+      return next(e);
+    }
+  },
+);
+
+// artistsRouter.get('/', user, async (req: RequestWithUser, res, next) => {
+//   try {
+//     const user = req.user; //будет либо user либо undefined
+//     let filter: FilterQuery<ArtistFields> = {};
+//
+//     if (!(user && user.role === 'admin')) {
+//       filter = { isPublished: true };
+//     }
+//
+//     const tracks = await Artist.find(filter);
+//     return res.send(tracks);
+//   } catch (e) {
+//     return next(e);
+//   }
+// });
+
+// artistsRouter.get('/:id', user, async (req: RequestWithUser, res, next) => {
+//   try {
+//     let _id: Types.ObjectId;
+//     try {
+//       _id = new Types.ObjectId(req.params.id);
+//     } catch {
+//       return res.status(404).send({ error: 'Wrong ObjectId!' });
+//     }
+//
+//     const artist = await Artist.findById(_id);
+//
+//     if (!artist) {
+//       return res.status(404).send({ error: 'Not found!' });
+//     }
+//
+//     if (!artist.isPublished) {
+//       if (
+//         !req.user ||
+//         (artist.user.toString() !== req.user._id.toString() &&
+//           req.user.role !== 'admin')
+//       ) {
+//         return res.status(403).send({ error: 'Access denied!' });
+//       }
+//     }
+//
+//     return res.send(artist);
+//   } catch (e) {
+//     next(e);
+//   }
+// });
 
 artistsRouter.post(
   '/',
@@ -77,7 +146,7 @@ artistsRouter.post(
       const artistData: ArtistMutation = {
         user: req.user._id.toString(),
         title: req.body.title,
-        information: req.body.description,
+        information: req.body.information,
         image: req.file ? req.file.filename : null,
         isPublished: req.body.isPublished,
       };
@@ -144,64 +213,28 @@ artistsRouter.patch(
   },
 );
 
-artistsRouter.delete(
-  '/:id',
-  auth,
-  permit('admin', 'user'),
-  async (req: RequestWithUser, res, next) => {
-    try {
-      const { id } = req.params;
-
-      const artist = await Artist.findById(id);
-
-      if (!artist) {
-        return res.status(404).send({ error: 'Not found!' });
-      }
-
-      if (
-        artist.isPublished ||
-        (req.user?.role !== 'admin' &&
-          artist.user.toString() !== req.user?._id.toString())
-      ) {
-        return res
-          .status(403)
-          .send({ error: 'You do not have permission to delete this artist.' });
-      }
-
-      await artist.deleteOne();
-
-      res.status(204).send({ message: 'Artist successfully deleted.' });
-    } catch (e) {
-      if (e instanceof mongoose.Error.ValidationError) {
-        return res.status(400).send({ error: 'Invalid artist ID format!' });
-      }
-      next(e);
-    }
-  },
-);
-
-artistsRouter.patch(
-  '/:id/togglePublished',
-  auth,
-  permit('admin'),
-  async (req, res, next) => {
-    try {
-      const artist = await Artist.findById(req.params.id);
-      if (!artist) {
-        return res.status(404).send({ message: 'Artist not found!' });
-      }
-
-      artist.isPublished = !artist.isPublished;
-      await artist.save();
-
-      res.send({ message: 'Publication status successfully updated.', artist });
-    } catch (e) {
-      if (e instanceof mongoose.Error.ValidationError) {
-        return res.status(422).send(e);
-      }
-      next(e);
-    }
-  },
-);
-
+// artistsRouter.patch(
+//   '/:id/togglePublished',
+//   auth,
+//   permit('admin'),
+//   async (req, res, next) => {
+//     try {
+//       const artist = await Artist.findById(req.params.id);
+//       if (!artist) {
+//         return res.status(404).send({ message: 'Artist not found!' });
+//       }
+//
+//       artist.isPublished = !artist.isPublished;
+//       await artist.save();
+//
+//       res.send({ message: 'Publication status successfully updated.', artist });
+//     } catch (e) {
+//       if (e instanceof mongoose.Error.ValidationError) {
+//         return res.status(422).send(e);
+//       }
+//       next(e);
+//     }
+//   },
+// );
+//
 export default artistsRouter;

@@ -7,6 +7,8 @@ import { fetchTracks } from './tracksThunks';
 import { selectTracks, selectTracksFetching } from './tracksSlice.ts';
 import { addTrackToHistory } from '../TracksHistory/TracksHistoryThunks.ts';
 import { selectAddingTrackId } from '../TracksHistory/TracksHistorySlice.ts';
+import { selectAlbum } from '../albums/albumsSlise.ts';
+import { fetchOneAlbum } from '../albums/albumsThunks.ts';
 
 const Tracks = () => {
   const dispatch = useAppDispatch();
@@ -15,20 +17,20 @@ const Tracks = () => {
   const albumId = searchParams.get('album') || '';
 
   const tracks = useAppSelector(selectTracks);
+
+  // const track = useAppSelector(selectArtist);
+
   const isLoadingTracks = useAppSelector(selectTracksFetching);
   const isAddTrackToHistory = useAppSelector(selectAddingTrackId);
 
-  const albumTitle = tracks.length > 0 ? tracks[0].album.title : 'Unknown Album';
-  const artistTitle = tracks.length > 0 ? tracks[0].album.artist.title : 'Unknown Artist';
-
   useEffect(() => {
-    if (albumId) {
-      dispatch(fetchTracks(albumId));
-    }
+    dispatch(fetchTracks(albumId));
+    dispatch(fetchOneAlbum(albumId));
   }, [dispatch, albumId]);
 
+  const album = useAppSelector(selectAlbum);
+
   const handlePlay = (trackId: string, link: string) => {
-    dispatch(addTrackToHistory({ trackId }));
     if (link) {
       dispatch(addTrackToHistory({ trackId }));
       window.open(link, '_blank');
@@ -48,15 +50,14 @@ const Tracks = () => {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid item>
-        <Typography variant="h4">{artistTitle}</Typography>
-        <Typography variant="h5">album: {albumTitle}</Typography>
+        <Typography variant="h4">{album && album.artist.title}</Typography>
+        <Typography variant="h5">album: {album && album.title}</Typography>
       </Grid>
       <Grid item container spacing={2}>
         {tracks.length > 0 ? (
           tracks.map((track) => (
             <TrackItem
               key={track._id}
-              number={track.number}
               title={track.title}
               duration={track.duration}
               onPlay={handlePlay}

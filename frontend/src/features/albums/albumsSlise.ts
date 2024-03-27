@@ -1,11 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { createAlbum, deleteAlbum, fetchAlbums, toggleAlbumPublishStatus } from './albumsThunks';
+import {
+  createAlbum,
+  deleteAlbum,
+  fetchAlbums,
+  fetchOneAlbum,
+  toggleAlbumPublishStatus,
+} from './albumsThunks';
 import { Album } from '../../types';
 
 interface AlbumsState {
   items: Album[];
+  item: Album | null;
   fetching: boolean;
+  fetchingOneAlbum: boolean;
   createAlbumLoading: boolean;
   deleteAlbumLoading: false | string;
   toggleAlbumPublishStatusLoading: false | string;
@@ -13,7 +21,9 @@ interface AlbumsState {
 
 const initialState: AlbumsState = {
   items: [],
+  item: null,
   fetching: false,
+  fetchingOneAlbum: false,
   createAlbumLoading: false,
   deleteAlbumLoading: false,
   toggleAlbumPublishStatusLoading: false,
@@ -33,6 +43,17 @@ export const albumsSlice = createSlice({
         state.items = albums;
       })
       .addCase(fetchAlbums.rejected, (state) => {
+        state.fetching = false;
+      })
+
+      .addCase(fetchOneAlbum.pending, (state) => {
+        state.fetching = true;
+      })
+      .addCase(fetchOneAlbum.fulfilled, (state, { payload: album }) => {
+        state.fetching = false;
+        state.item = album;
+      })
+      .addCase(fetchOneAlbum.rejected, (state) => {
         state.fetching = false;
       })
 
@@ -70,9 +91,10 @@ export const albumsSlice = createSlice({
 
 export const albumsReducer = albumsSlice.reducer;
 export const selectAlbums = (state: RootState) => state.albums.items;
+export const selectAlbum = (state: RootState) => state.albums.item;
 export const selectAlbumsFetching = (state: RootState) => state.albums.fetching;
-export const selectAlbum = (state: RootState, albumId: string) =>
-  state.albums.items.find((album) => album._id === albumId);
+// export const selectAlbum = (state: RootState, albumId: string) =>
+//   state.albums.items.find((album) => album._id === albumId);
 export const selectAlbumCreating = (state: RootState) => state.albums.createAlbumLoading;
 export const selectDeleteAlbumLoading = (state: RootState) => state.albums.deleteAlbumLoading;
 

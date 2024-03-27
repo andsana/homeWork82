@@ -30,7 +30,7 @@ interface Props {
   ontogglePublish: (albumId: string) => void;
   isLoading: boolean;
   isPublish: boolean;
-  trackCount: number;
+  totalTracks: number;
 }
 
 const AlbumItem: React.FC<Props> = ({
@@ -44,7 +44,7 @@ const AlbumItem: React.FC<Props> = ({
   albumId,
   userId,
   isLoading,
-  trackCount,
+  totalTracks,
 }) => {
   const user = useAppSelector(selectUser);
   let cardImage = imageNotAvailable;
@@ -84,7 +84,7 @@ const AlbumItem: React.FC<Props> = ({
                 {releaseYear}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                number of tracks: {trackCount}
+                total tracks: {totalTracks}
               </Typography>
               {user && (user._id === userId || user.role === 'admin') && (
                 <Typography variant="body2" color="text.secondary">

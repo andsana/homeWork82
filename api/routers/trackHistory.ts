@@ -13,7 +13,7 @@ trackHistoryRouter.post(
   async (req: RequestWithUser, res, next) => {
     try {
       const trackHistory = new TrackHistory({
-        user: req.user?.id,
+        user: req.user?._id,
         track: req.body.track,
       });
 

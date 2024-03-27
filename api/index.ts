@@ -2,12 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 
-import config from './config';
+
 import artistsRouter from './routers/artists';
 import albumsRouter from './routers/albums';
 import tracksRouter from './routers/tracks';
 import userRouter from './routers/users';
 import trackHistoryRouter from './routers/trackHistory';
+import config from './config';
 
 const app = express();
 const port = 8000;

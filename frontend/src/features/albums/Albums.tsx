@@ -71,7 +71,7 @@ const Albums = () => {
               title={album.title}
               image={album.image}
               releaseYear={album.releaseYear}
-              trackCount={album.trackCount}
+              totalTracks={album.totalTracks}
               isPublished={album.isPublished}
               onDelete={() => handleDelete(album._id)}
               ontogglePublish={() => handleTogglePublish(album._id)}

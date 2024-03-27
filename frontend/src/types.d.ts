@@ -24,7 +24,7 @@ export interface Album {
   title: string;
   releaseYear: number;
   image: string;
-  trackCount: number;
+  totalTracks: number;
   artist: Artist;
   isPublished: boolean;
   user: Album;
@@ -40,7 +40,6 @@ export interface AlbumMutation {
 
 export interface Track {
   _id: string;
-  number: number;
   title: string;
   duration: string;
   album: Album;
@@ -48,7 +47,6 @@ export interface Track {
 }
 
 export interface TrackMutation {
-  number: string;
   title: string;
   duration: string;
   link: string;
@@ -58,18 +56,18 @@ export interface TrackMutation {
 }
 
 export interface RegisterMutation {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface LoginMutation {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface User {
   _id: string;
-  username: string;
+  email: string;
   token: string;
   role: string;
 }

@@ -8,19 +8,19 @@ const SALT_WORK_FACTOR = 10;
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema<UserFields, UserModel, UserMethods>({
-  username: {
+  email: {
     type: String,
     required: true,
     unique: true,
     validate: {
       validator: async function (
         this: HydratedDocument<UserFields>,
-        username: string,
+        email: string,
       ): Promise<boolean> {
-        if (!this.isModified('username')) return true;
+        if (!this.isModified('email')) return true;
 
         const user: HydratedDocument<UserFields> | null = await User.findOne({
-          username: username,
+          email: email,
         });
         return !user;
       },
@@ -41,6 +41,11 @@ const UserSchema = new Schema<UserFields, UserModel, UserMethods>({
     enum: ['user', 'admin'],
     default: 'user',
   },
+  displayName: {
+    type: String,
+    required: true,
+  },
+  googleID: String,
 });
 
 UserSchema.methods.checkPassword = function (password: string) {

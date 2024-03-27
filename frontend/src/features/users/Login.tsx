@@ -1,31 +1,47 @@
 import React, { useState } from 'react';
 import { LoginMutation } from '../../types';
-import { Alert, Avatar, Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
-import {Link as RouterLink, useNavigate} from 'react-router-dom';
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Container,
+  Grid,
+  Link,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectLoginError } from './usersSlice';
-import {login} from "./usersThunk";
+import { googleLogin, login } from './usersThunk';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const error = useAppSelector(selectLoginError);
   const [state, setState] = useState<LoginMutation>({
-    username: '',
+    email: '',
     password: '',
   });
 
   const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = event.target;
-    setState(prevState => {
-      return {...prevState, [name]: value};
+    const { name, value } = event.target;
+    setState((prevState) => {
+      return { ...prevState, [name]: value };
     });
   };
 
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     await dispatch(login(state)).unwrap();
+    navigate('/');
+  };
+
+  const googleLoginHandler = async (credential: string) => {
+    await dispatch(googleLogin(credential)).unwrap();
     navigate('/');
   };
 
@@ -39,25 +55,37 @@ const Login = () => {
           alignItems: 'center',
         }}
       >
-        <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
-          <LockOpenIcon/>
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOpenIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
         {error && (
-          <Alert severity="error" sx={{nt: 3, width: '100%'}}>
+          <Alert severity="error" sx={{ nt: 3, width: '100%' }}>
             {error.error}
           </Alert>
         )}
-        <Box component="form" onSubmit={submitFormHandler} sx={{mt: 3}}>
+        <Box sx={{ pt: 2 }}>
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              if (credentialResponse.credential) {
+                void googleLoginHandler(credentialResponse.credential);
+              }
+            }}
+            onError={() => {
+              console.log('Login failed');
+            }}
+          />
+        </Box>
+        <Box component="form" onSubmit={submitFormHandler} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                label="Username"
-                name="username"
-                autoComplete="current-username"
-                value={state.username}
+                label="E-mail"
+                name="email"
+                autoComplete="current-email"
+                value={state.email}
                 onChange={inputChangeHandler}
               />
             </Grid>
@@ -72,12 +100,7 @@ const Login = () => {
               />
             </Grid>
           </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{mt: 3, mb: 2}}
-          >
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
             Sign in
           </Button>
           <Grid container justifyContent="flex-end">

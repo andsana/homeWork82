@@ -8,7 +8,10 @@ import { fetchArtists } from '../artists/artistsThunks.ts';
 export const fetchAlbums = createAsyncThunk<
   Album[],
   string | undefined,
-  { state: RootState; rejectValue: GlobalError }
+  {
+    state: RootState;
+    rejectValue: GlobalError;
+  }
 >('albums/fetchAll', async (artistId, { getState, rejectWithValue }) => {
   const token = getState().users.user?.token;
   let headers = {};
@@ -32,6 +35,29 @@ export const fetchAlbums = createAsyncThunk<
     }
     throw e;
   }
+});
+
+export const fetchOneAlbum = createAsyncThunk<
+  Album,
+  string,
+  {
+    state: RootState;
+  }
+>('albums/fetchOneAlbum', async (albumId, { getState }) => {
+  const token = getState().users.user?.token;
+  let headers = {};
+
+  if (token) {
+    headers = { Authorization: `Bearer ${token}` };
+  }
+
+  const response = await axiosApi.get<Album | null>(`/albums/${albumId}`, { headers });
+  const album = response.data;
+
+  if (album === null) {
+    throw new Error('Not found');
+  }
+  return album;
 });
 
 export const createAlbum = createAsyncThunk<null, AlbumMutation>(
@@ -80,7 +106,10 @@ export const createAlbum = createAsyncThunk<null, AlbumMutation>(
 export const deleteAlbum = createAsyncThunk<
   void,
   string,
-  { state: RootState; rejectValue: GlobalError }
+  {
+    state: RootState;
+    rejectValue: GlobalError;
+  }
 >('albums/delete', async (albumsId, thunkAPI) => {
   const token = thunkAPI.getState().users.user?.token;
 
@@ -107,7 +136,10 @@ export const deleteAlbum = createAsyncThunk<
 export const toggleAlbumPublishStatus = createAsyncThunk<
   void,
   string,
-  { state: RootState; rejectValue: GlobalError }
+  {
+    state: RootState;
+    rejectValue: GlobalError;
+  }
 >('albums/togglePublishStatus', async (albumsId, thunkAPI) => {
   const token = thunkAPI.getState().users.user?.token;
 

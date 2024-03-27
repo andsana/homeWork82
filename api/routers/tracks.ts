@@ -1,76 +1,85 @@
 import { Router } from 'express';
 import mongoose, { Types } from 'mongoose';
-
-import { TrackMutation } from '../types';
 import Track from '../models/Track';
-import Album from '../models/Album';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import user from '../middleware/user';
-import Artist from '../models/Artist';
-import artistsRouter from './artists';
+import { TrackMutation } from '../types';
 
 const tracksRouter = Router();
-
-artistsRouter.get('/', user, async (req: RequestWithUser, res, next) => {
-  try {
-    let artists;
-
-    if (req.user && req.user.role === 'admin') {
-      artists = await Artist.find({});
-    } else if (req.user) {
-      artists = await Artist.find({});
-      artists = artists.filter(
-        (artist) =>
-          artist.isPublished ||
-          artist.user.toString() === req.user?._id.toString(),
-      );
-    } else {
-      artists = await Artist.find({ isPublished: true });
-    }
-
-    return res.send(artists);
-  } catch (e) {
-    next(e);
-  }
-});
 
 tracksRouter.get('/', user, async (req: RequestWithUser, res, next) => {
   try {
     let query = {};
     const albumId = req.query.album;
-    const artistId = req.query.artist;
 
     if (albumId) {
       query = { album: albumId };
     }
 
-    if (artistId) {
-      const albums = await Album.find({ artist: artistId });
-      const albumIds = albums.map((album) => album._id);
+    const user = req.user; // будет либо user либо undefined
+    let filter = {};
 
-      const tracks = await Track.find({ album: { $in: albumIds } }).sort(
-        'number',
-      );
-      return res.send(tracks);
+    if (user && user.role === 'admin') {
+      filter = {};
+    } else if (user) {
+      filter = {
+        $or: [{ isPublished: true }, { user: user._id }],
+      };
+    } else {
+      filter = { isPublished: true };
     }
 
-    const results = await Track.find(query)
-      .populate({
-        path: 'album',
-        select: 'title artist',
-        populate: {
-          path: 'artist',
-          select: 'title',
-        },
-      })
-      .sort('number');
-
-    res.send(results);
+    const tracks = await Track.find(query).find(filter);
+    return res.send(tracks);
   } catch (e) {
     return next(e);
   }
 });
+
+// tracksRouter.get('/:id', user, async (req: RequestWithUser, res, next) => {
+//   try {
+//     const user = req.user; // будет либо user либо undefined
+//     let filter = {};
+//
+//     if (user && user.role === 'admin') {
+//       // Администраторы видят все треки
+//       filter = {};
+//     } else if (user) {
+//       // Обычные пользователи видят опубликованные треки или свои треки
+//       filter = {
+//         $or: [
+//           { isPublished: true },
+//           { user: user._id }, // Фильтруем треки по ID пользователя
+//         ],
+//       };
+//     } else {
+//       // Неаутентифицированные пользователи видят только опубликованные треки
+//       filter = { isPublished: true };
+//     }
+//
+//     const tracks = await Track.find(filter).populate('user', 'email');
+//     return res.send(tracks);
+//   } catch (e) {
+//     return next(e);
+//   }
+// });
+
+// tracksRouter.get('/', user, async (req: RequestWithUser, res, next) => {
+//   try {
+//     const user = req.user; //будет либо user либо undefined
+//     let filter: FilterQuery<TrackFields> = {};
+//
+//     if (!(user && user.role === 'admin')) {
+//       filter = { isPublished: true };
+//     }
+//
+//     const tracks = await Track.find(filter);
+//     return res.send(tracks);
+//   } catch (e) {
+//     return next(e);
+//   }
+// });
 
 tracksRouter.get('/:id', async (req, res, next) => {
   try {
@@ -112,7 +121,6 @@ tracksRouter.post(
 
       const trackData: TrackMutation = {
         user: req.user._id.toString(),
-        number: req.body.number,
         album: req.body.album,
         title: req.body.title,
         duration: req.body.duration,

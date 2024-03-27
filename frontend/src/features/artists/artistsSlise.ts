@@ -1,5 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { deleteArtist, fetchArtists, toggleArtistPublishStatus } from './artistsThunks.ts';
+import {
+  deleteArtist,
+  fetchArtists,
+  fetchOneArtist,
+  toggleArtistPublishStatus,
+} from './artistsThunks.ts';
 import { Artist } from '../../types';
 import { RootState } from '../../app/store.ts';
 
@@ -7,6 +12,7 @@ interface ArtistsState {
   items: Artist[];
   item: Artist | null;
   fetchLoading: boolean;
+  fetchOneArtistLoading: boolean;
   deleteLoading: false | string;
   toggleArtistPublishStatusLoading: false | string;
 }
@@ -15,6 +21,7 @@ const initialState: ArtistsState = {
   items: [],
   item: null,
   fetchLoading: false,
+  fetchOneArtistLoading: false,
   deleteLoading: false,
   toggleArtistPublishStatusLoading: false,
 };
@@ -34,6 +41,17 @@ export const artistsSlice = createSlice({
       })
       .addCase(fetchArtists.rejected, (state) => {
         state.fetchLoading = false;
+      })
+
+      .addCase(fetchOneArtist.pending, (state) => {
+        state.fetchOneArtistLoading = true;
+      })
+      .addCase(fetchOneArtist.fulfilled, (state, { payload: artist }) => {
+        state.fetchOneArtistLoading = false;
+        state.item = artist;
+      })
+      .addCase(fetchOneArtist.rejected, (state) => {
+        state.fetchOneArtistLoading = false;
       })
 
       .addCase(deleteArtist.pending, (state, { meta }) => {
@@ -60,6 +78,7 @@ export const artistsSlice = createSlice({
 
 export const artistsReducer = artistsSlice.reducer;
 export const selectArtists = (state: RootState) => state.artists.items;
+export const selectArtist = (state: RootState) => state.artists.item;
 export const selectArtistsLoading = (state: RootState) => state.artists.fetchLoading;
 export const selectArtistById = (state: RootState, artistId: string) =>
   state.artists.items.find((artist) => artist._id === artistId);

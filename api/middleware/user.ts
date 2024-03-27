@@ -1,11 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
-import { HydratedDocument } from 'mongoose';
-import { UserFields } from '../types';
+import { NextFunction, Response } from 'express';
 import User from '../models/User';
-
-export interface RequestWithUser extends Request {
-  user?: HydratedDocument<UserFields>;
-}
+import { RequestWithUser } from './auth';
 
 const user = async (
   req: RequestWithUser,
@@ -27,7 +22,7 @@ const user = async (
   const user = await User.findOne({ token });
 
   if (!user) {
-    return res.status(401).send({ error: 'Wrong token!' });
+    return next();
   }
 
   req.user = user;

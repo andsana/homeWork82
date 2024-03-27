@@ -1,35 +1,62 @@
 import { Model } from 'mongoose';
 
 export interface AlbumMutation {
+  user: string;
   artist: string;
   title: string;
   releaseYear: number;
   image: string | null;
+  isPublished: string;
+}
+
+export interface AlbumFields {
   user: string;
+  artist: string;
+  title: string;
+  releaseYear: number;
+  image: string | null;
   isPublished: string;
 }
 
 export interface TrackMutation {
-  number: number;
+  user: string;
   album: string;
   title: string;
   duration: string;
+}
+
+export interface TrackFields {
   user: string;
+  album: string;
+  title: string;
+  duration: string;
+  number: number;
+  link: string;
+  isPublished: string;
 }
 
 export interface UserFields {
-  username: string;
+  email: string;
   password: string;
   token: string;
   role: string;
+  displayName: String;
+  googleID?: String;
 }
 
 export interface ArtistMutation {
+  user: string;
   title: string;
   information: string;
   image: string | null;
   isPublished: boolean;
-  user: string;
+}
+
+export interface ArtistFields {
+  title: string;
+  information: string;
+  image: string | null;
+  isPublished: boolean;
 }
 
 export interface TrackHistoryMutation {

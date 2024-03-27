@@ -1,6 +1,6 @@
-import { model, Schema, Types } from 'mongoose';
-import Album from './Album';
+import mongoose, { Schema, Types } from 'mongoose';
 import User from './User';
+import Album from './Album';
 
 const TrackSchema = new Schema({
   user: {
@@ -27,16 +27,16 @@ const TrackSchema = new Schema({
       message: 'Album does not exist!',
     },
   },
-  number: {
-    type: Number,
-    required: true,
-  },
   title: {
     type: String,
     required: true,
   },
   duration: {
     type: String,
+    required: true,
+  },
+  number: {
+    type: Number,
     required: true,
   },
   link: String,
@@ -46,6 +46,5 @@ const TrackSchema = new Schema({
   },
 });
 
-const Track = model('Track', TrackSchema);
-
+const Track = mongoose.model('Track', TrackSchema);
 export default Track;

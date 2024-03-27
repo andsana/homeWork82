@@ -8,7 +8,7 @@ const userRouter = express.Router();
 userRouter.post('/', async (req, res, next) => {
   try {
     const user = new User({
-      username: req.body.username,
+      email: req.body.email,
       password: req.body.password,
     });
 
@@ -26,10 +26,10 @@ userRouter.post('/', async (req, res, next) => {
 
 userRouter.post('/sessions', async (req, res, next) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
+    const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-      return res.status(422).send({ error: 'Username not found' });
+      return res.status(422).send({ error: 'email not found' });
     }
 
     const isMatch = await user.checkPassword(req.body.password);
@@ -41,7 +41,7 @@ userRouter.post('/sessions', async (req, res, next) => {
     user.generateToken();
     await user.save();
 
-    return res.send({ Message: 'Username and password are correct!', user });
+    return res.send({ Message: 'email and password are correct!', user });
   } catch (e) {
     next(e);
   }
