@@ -22,21 +22,23 @@ const run = async () => {
   await mongoose.connect(config.mongoose.db);
   const db = mongoose.connection;
 
-  const models = [TrackHistory, User, Track, Album, Artist];
+  const collections = ['track-history', 'users', 'tracks', 'albums', 'artists'];
 
-  for (const model of models) {
-    await dropCollection(db, model.collection.collectionName);
+  for (const collectionName of collections) {
+    await dropCollection(db, collectionName);
   }
 
   const [user, _admin] = await User.create(
     {
-      email: 'user',
+      email: 'user@shop.local',
+      displayName: 'user',
       password: '123456',
       token: crypto.randomUUID(),
       role: 'user',
     },
     {
-      email: 'admin',
+      email: 'admin@shop.local',
+      displayName: 'admin',
       password: '123456',
       token: crypto.randomUUID(),
       role: 'admin',

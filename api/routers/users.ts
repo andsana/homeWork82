@@ -2,8 +2,12 @@ import express from 'express';
 import User from '../models/User';
 import mongoose from 'mongoose';
 import auth, { RequestWithUser } from '../middleware/auth';
+import crypto from 'crypto';
+import { OAuth2Client } from 'google-auth-library';
+import config from '../config';
 
 const userRouter = express.Router();
+const client = new OAuth2Client(config.google.clientId);
 
 userRouter.post('/', async (req, res, next) => {
   try {
@@ -44,6 +48,48 @@ userRouter.post('/sessions', async (req, res, next) => {
     return res.send({ Message: 'email and password are correct!', user });
   } catch (e) {
     next(e);
+  }
+});
+
+userRouter.post('/google', async (req, res, next) => {
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: req.body.credential,
+      audience: config.google.clientId,
+    });
+
+    const payload = ticket.getPayload();
+
+    if (!payload) {
+      return res.status(400).send({ error: 'Google login error' });
+    }
+
+    const email = payload['email'];
+    const id = payload['sub']; //subject
+    const displayName = payload['name'];
+
+    if (!email) {
+      return res.status(400).send({ error: 'Email is not present' });
+    }
+
+    let user = await User.findOne({ googleID: id });
+
+    if (!user) {
+      user = new User({
+        email,
+        password: crypto.randomUUID(),
+        googleID: id,
+        displayName,
+      });
+    }
+
+    user.generateToken();
+
+    await user.save();
+
+    return res.send({ message: 'Login with Google successful!!', user });
+  } catch (e) {
+    return next(e);
   }
 });
 

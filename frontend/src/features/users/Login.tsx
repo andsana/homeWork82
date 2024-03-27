@@ -15,7 +15,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectLoginError } from './usersSlice';
-import { googleLogin, login } from './usersThunk';
+import { googleLogin, login } from './usersThunks.ts';
 import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
@@ -46,7 +46,7 @@ const Login = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component='main' maxWidth='xs'>
       <Box
         sx={{
           marginTop: 8,
@@ -58,11 +58,11 @@ const Login = () => {
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           <LockOpenIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography component='h1' variant='h5'>
           Sign in
         </Typography>
         {error && (
-          <Alert severity="error" sx={{ nt: 3, width: '100%' }}>
+          <Alert severity='error' sx={{ nt: 3, width: '100%' }}>
             {error.error}
           </Alert>
         )}
@@ -78,34 +78,34 @@ const Login = () => {
             }}
           />
         </Box>
-        <Box component="form" onSubmit={submitFormHandler} sx={{ mt: 3 }}>
+        <Box component='form' onSubmit={submitFormHandler} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                label="E-mail"
-                name="email"
-                autoComplete="current-email"
+                label='E-mail'
+                name='email'
+                autoComplete='current-email'
                 value={state.email}
                 onChange={inputChangeHandler}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                name="password"
-                label="Password"
-                type="password"
+                name='password'
+                label='Password'
+                type='password'
                 value={state.password}
                 onChange={inputChangeHandler}
-                autoComplete="current-password"
+                autoComplete='current-password'
               />
             </Grid>
           </Grid>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+          <Button type='submit' fullWidth variant='contained' sx={{ mt: 3, mb: 2 }}>
             Sign in
           </Button>
-          <Grid container justifyContent="flex-end">
+          <Grid container justifyContent='flex-end'>
             <Grid item>
-              <Link component={RouterLink} to="/register" variant="body2">
+              <Link component={RouterLink} to='/register' variant='body2'>
                 Or sign up
               </Link>
             </Grid>

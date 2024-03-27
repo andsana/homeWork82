@@ -5,7 +5,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectRegisterError } from './usersSlice';
-import { register } from './usersThunk';
+import { register } from './usersThunks.ts';
 
 const Register = () => {
   const dispatch = useAppDispatch();
@@ -61,7 +61,6 @@ const Register = () => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                required
                 label="E-mail"
                 name="email"
                 value={state.email}
