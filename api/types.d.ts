@@ -48,7 +48,7 @@ export interface UserFields {
 export interface UserMutation {
   email: string;
   password: string;
-  displayName: String;
+  displayName: string;
   image: string | null;
 }
 
