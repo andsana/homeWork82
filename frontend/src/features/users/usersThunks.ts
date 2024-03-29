@@ -11,14 +11,23 @@ import { isAxiosError } from 'axios';
 import { RootState } from '../../app/store';
 import { unsetUser } from './usersSlice';
 
-export const register = createAsyncThunk<
-  RegisterResponse,
-  RegisterMutation,
-  { rejectValue: ValidationError }
->('users/register', async (registerMutation, { rejectWithValue }) => {
+export const register = createAsyncThunk<RegisterResponse, RegisterMutation, {
+  rejectValue: ValidationError
+}>
+('users/register', async (registerMutation, { rejectWithValue }) => {
   try {
-    const response = await axiosApi.post('/users', registerMutation);
-    return response.data;
+    const formData = new FormData();
+
+    const keys = Object.keys(registerMutation) as (keyof RegisterMutation)[];
+    keys.forEach(key => {
+      const value = registerMutation[key];
+
+      if (value !== null) {
+        formData.append(key, value);
+      }
+    });
+
+    return await axiosApi.post('/users', formData);
   } catch (e) {
     if (isAxiosError(e) && e.response && e.response.status === 422) {
       return rejectWithValue(e.response.data);
@@ -31,7 +40,9 @@ export const register = createAsyncThunk<
 export const login = createAsyncThunk<
   RegisterResponse,
   LoginMutation,
-  { rejectValue: GlobalError }
+  {
+    rejectValue: GlobalError
+  }
 >('users/login', async (loginMutation, { rejectWithValue }) => {
   try {
     const response = await axiosApi.post<RegisterResponse>('/users/sessions', loginMutation);
@@ -45,7 +56,9 @@ export const login = createAsyncThunk<
   }
 });
 
-export const googleLogin = createAsyncThunk<RegisterResponse, string, { rejectValue: GlobalError }>(
+export const googleLogin = createAsyncThunk<RegisterResponse, string, {
+  rejectValue: GlobalError
+}>(
   'users/googleLogin',
   async (credential, { rejectWithValue }) => {
     try {
@@ -61,7 +74,9 @@ export const googleLogin = createAsyncThunk<RegisterResponse, string, { rejectVa
   },
 );
 
-export const logout = createAsyncThunk<void, undefined, { state: RootState }>(
+export const logout = createAsyncThunk<void, undefined, {
+  state: RootState
+}>(
   'users/logout',
   async (_, { getState, dispatch }) => {
     const token = getState().users.user?.token;

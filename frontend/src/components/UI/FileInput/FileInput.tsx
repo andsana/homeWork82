@@ -26,6 +26,7 @@ const FileInput: React.FC<Props> = ({onChange, name, onClear, label, filename}) 
         name={name}
         onChange={onChange}
         ref={inputRef}
+        accept='image/jpeg,image/png, image/jpg'
       />
       <Grid container direction="row" spacing={2} alignItems="center">
         <Grid item xs>

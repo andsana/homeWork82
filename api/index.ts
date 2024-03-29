@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 
-
 import artistsRouter from './routers/artists';
 import albumsRouter from './routers/albums';
 import tracksRouter from './routers/tracks';

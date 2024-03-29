@@ -58,6 +58,8 @@ export interface TrackMutation {
 export interface RegisterMutation {
   email: string;
   password: string;
+  displayName: string;
+  image: File | string | null;
 }
 
 export interface LoginMutation {
@@ -70,6 +72,8 @@ export interface User {
   email: string;
   token: string;
   role: string;
+  displayName: string;
+  image?: string;
 }
 
 export interface ValidationError {
@@ -87,6 +91,7 @@ export interface ValidationError {
 export interface RegisterResponse {
   message: string;
   user: User;
+  displayName: string;
 }
 
 export interface GlobalError {

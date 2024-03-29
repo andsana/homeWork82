@@ -5,19 +5,25 @@ import auth, { RequestWithUser } from '../middleware/auth';
 import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 import config from '../config';
+import { imagesUpload } from '../multer';
+import { UserMutation } from '../types';
 
 const userRouter = express.Router();
 const client = new OAuth2Client(config.google.clientId);
 
-userRouter.post('/', async (req, res, next) => {
+userRouter.post('/', imagesUpload.single('image'), async (req, res, next) => {
   try {
-    const user = new User({
+    const userData: UserMutation = {
       email: req.body.email,
       password: req.body.password,
-    });
+      displayName: req.body.displayName,
+      image: req.file ? req.file.filename : null,
+    };
 
+    const user = new User(userData);
     user.generateToken();
     await user.save();
+
     return res.send({ message: 'ok!', user });
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {

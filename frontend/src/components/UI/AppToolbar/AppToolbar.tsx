@@ -21,7 +21,7 @@ const AppToolbar = () => {
       <Toolbar>
         <Grid container justifyContent="space-betweem" alignItems="center">
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Link to="/">Music</Link>
+            <Link to="/">MusicStore</Link>
           </Typography>
           {user ? <UserMenu user={user} /> : <AnonymousMenu />}
         </Grid>

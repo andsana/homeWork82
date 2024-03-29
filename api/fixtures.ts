@@ -35,6 +35,7 @@ const run = async () => {
       password: '123456',
       token: crypto.randomUUID(),
       role: 'user',
+      image: 'fixtures/avatar.png',
     },
     {
       email: 'admin@shop.local',
@@ -42,6 +43,7 @@ const run = async () => {
       password: '123456',
       token: crypto.randomUUID(),
       role: 'admin',
+      image: 'fixtures/avatar.png',
     },
   );
 

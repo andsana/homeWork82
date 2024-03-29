@@ -41,7 +41,15 @@ export interface UserFields {
   token: string;
   role: string;
   displayName: String;
+  image: string | null;
   googleID?: String;
+}
+
+export interface UserMutation {
+  email: string;
+  password: string;
+  displayName: String;
+  image: string | null;
 }
 
 export interface ArtistMutation {

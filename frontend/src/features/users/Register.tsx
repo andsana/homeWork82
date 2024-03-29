@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { RegisterMutation } from '../../types';
 import { Avatar, Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectRegisterError } from './usersSlice';
-import { register } from './usersThunks.ts';
+import { login, register } from './usersThunks.ts';
+import FileInput from '../../components/UI/FileInput/FileInput.tsx';
 
-const Register = () => {
+interface Props {
+  existingImage?: string | null;
+}
+
+const Register: React.FC<Props> = ({existingImage}) => {
   const dispatch = useAppDispatch();
   const error = useAppSelector(selectRegisterError);
   const navigate = useNavigate();
@@ -15,6 +20,8 @@ const Register = () => {
   const [state, setState] = useState<RegisterMutation>({
     email: '',
     password: '',
+    displayName: '',
+    image: null,
   });
 
   const getFieldError = (fieldName: string) => {
@@ -34,12 +41,33 @@ const Register = () => {
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      await dispatch(register(state)).unwrap(); //unwrap - запрещает выполнение dispatch при ошибке
+      await dispatch(register(state)).unwrap();
+      await dispatch(login(state)).unwrap();
       navigate('/');
     } catch (e) {
-      //error
+      console.error("error:", error);
     }
   };
+
+  const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = e.target;
+    if (files) {
+      setState((prevState) => ({
+        ...prevState,
+        [name]: files[0],
+      }));
+    }
+  };
+
+  const selectedFileName = useMemo(() => {
+    if (state.image instanceof File) {
+      return state.image.name;
+    } else if (state.image === 'delete') {
+      return undefined;
+    } else if (existingImage) {
+      return existingImage;
+    }
+  }, [state.image, existingImage]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -63,11 +91,23 @@ const Register = () => {
               <TextField
                 label="E-mail"
                 name="email"
+                type="email"
                 value={state.email}
                 onChange={inputChangeHandler}
                 autoComplete="new-email"
                 error={Boolean(getFieldError('email'))}
                 helperText={getFieldError('email')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Display name"
+                name="displayName"
+                value={state.displayName}
+                onChange={inputChangeHandler}
+                autoComplete="new-displayName"
+                error={Boolean(getFieldError('displayName'))}
+                helperText={getFieldError('displayName')}
               />
             </Grid>
             <Grid item xs={12}>
@@ -81,6 +121,14 @@ const Register = () => {
                 autoComplete="new-password"
                 error={Boolean(getFieldError('password'))}
                 helperText={getFieldError('password')}
+              />
+            </Grid>
+            <Grid item xs>
+              <FileInput
+                label="Image"
+                name="image"
+                filename={selectedFileName}
+                onChange={fileInputChangeHandler}
               />
             </Grid>
           </Grid>
