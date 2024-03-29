@@ -40,9 +40,9 @@ export interface UserFields {
   password: string;
   token: string;
   role: string;
-  displayName: String;
+  displayName: string;
   image: string | null;
-  googleID?: String;
+  googleID?: string;
 }
 
 export interface UserMutation {
