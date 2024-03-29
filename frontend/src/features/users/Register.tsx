@@ -38,6 +38,7 @@ const Register: React.FC<Props> = ({existingImage}) => {
       return { ...prevState, [name]: value };
     });
   };
+
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
@@ -68,6 +69,13 @@ const Register: React.FC<Props> = ({existingImage}) => {
       return existingImage;
     }
   }, [state.image, existingImage]);
+
+  const onImageClear = () => {
+    setState(prev => ({
+      ...prev,
+      image: 'delete',
+    }));
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -129,6 +137,7 @@ const Register: React.FC<Props> = ({existingImage}) => {
                 name="image"
                 filename={selectedFileName}
                 onChange={fileInputChangeHandler}
+                onClear={onImageClear}
               />
             </Grid>
           </Grid>
